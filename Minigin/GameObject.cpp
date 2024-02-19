@@ -5,7 +5,9 @@
 
 dae::GameObject::~GameObject() = default;
 
-void dae::GameObject::Update(){}
+void dae::GameObject::Update(float){}
+
+void dae::GameObject::PhysicsUpdate(float){}
 
 void dae::GameObject::Render() const
 {

@@ -10,7 +10,8 @@ namespace dae
 	class GameObject 
 	{
 	public:
-		virtual void Update();
+		virtual void Update(float dt);
+		virtual void PhysicsUpdate(float dt);
 		virtual void Render() const;
 
 		void SetTexture(const std::string& filename);

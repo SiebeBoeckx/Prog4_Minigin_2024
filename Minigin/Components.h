@@ -1,0 +1,54 @@
+#pragma once
+#include <glm/glm.hpp>
+#include <string>
+#include "GameObject.h"
+
+namespace dae
+{
+	class Texture2D;
+	class Font;
+
+	class Component
+	{
+	public:
+		//Component() = default;
+		virtual ~Component() = default;
+
+		Component(const Component& other) = delete;
+		Component(Component&& other) = delete;
+		Component& operator=(const Component& other) = delete;
+		Component& operator=(Component&& other) = delete;
+
+
+		virtual void BeginPlay() {};
+		virtual void Update(float) {};
+		virtual void Render() const {};
+		virtual void RenderUI() const {};
+		virtual void SetPosition(float, float, float) {};
+		virtual void SetPosition(glm::vec3) {};
+
+		const GameObject* GetOwner() const { return m_pOwner; };
+		GameObject* GetChangeableOwner() const { return m_pOwner; };
+	protected:
+		explicit Component(GameObject* pOwner) : m_pOwner(pOwner) {};
+	private:
+		GameObject* m_pOwner{ nullptr };
+	};
+
+	class RenderComponent final : public Component
+	{
+	public:
+		RenderComponent(GameObject* pOwner)
+			:Component(pOwner)
+		{};
+
+		void Update(float) override;
+		void Render() const override;
+		void SetTexture(const std::string& filename);
+		void SetTexture(const std::shared_ptr<Texture2D>& texture);
+		std::shared_ptr<Texture2D> GetTexturePtr() const { return m_texture; };
+	private:
+		std::shared_ptr<Texture2D> m_texture{ nullptr };
+		const Transform* m_pOwnerTransform{ nullptr };
+	};
+}

@@ -1,10 +1,11 @@
 #pragma once
 #include <memory>
+#include <vector>
 #include "Transform.h"
 
 namespace dae
 {
-	class Texture2D;
+	class Component;
 
 	// todo: this should become final.
 	class GameObject 
@@ -14,8 +15,10 @@ namespace dae
 		virtual void PhysicsUpdate(float dt);
 		virtual void Render() const;
 
-		void SetTexture(const std::string& filename);
 		void SetPosition(float x, float y);
+		void SetPosition(float x, float y, float z);
+		void SetPosition(glm::vec3 pos);
+		const Transform* GetTransform() const { return &m_transform; };
 
 		GameObject() = default;
 		virtual ~GameObject();
@@ -24,9 +27,63 @@ namespace dae
 		GameObject& operator=(const GameObject& other) = delete;
 		GameObject& operator=(GameObject&& other) = delete;
 
+#pragma region ComponentTemplate
+
+		template <typename T, typename... Args>
+		T& AddComponent(Args&&... args)
+		{
+			m_pComponents.emplace_back(std::make_shared<T>(this, std::forward<Args>(args)...));
+
+			//if(typeid(T) == typeid(Transform))
+			//{
+			//	m_localPos = dynamic_cast<Transform*>(m_pComponents.back().get())->GetPosition();
+			//}
+			return *static_cast<T*>(m_pComponents.back().get());
+		}
+		template <typename T>
+		void RemoveComponent()
+		{
+			for (auto it{ m_pComponents.begin() }; it != m_pComponents.end(); ++it)
+			{
+				if (dynamic_cast<T*>(it->get()))
+				{
+					m_pComponents.erase(it);
+					break;
+				}
+			}
+		}
+
+		template <typename T>
+		T* GetComponent() const
+		{
+			for (auto& component : m_pComponents)
+			{
+				T* CompPtr = dynamic_cast<T*>(component.get());
+				if (CompPtr)
+				{
+					return CompPtr;
+				}
+			}
+			return nullptr;
+		}
+
+		template <typename T>
+		bool IsComponentPresent() const //Barely/Not used, just have it just in case I need it
+		{
+			for (auto& component : m_pComponents)
+			{
+				T* CompPtr = dynamic_cast<T*>(component.get());
+				if (CompPtr)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+#pragma endregion
 	private:
 		Transform m_transform{};
-		// todo: mmm, every gameobject has a texture? Is that correct?
-		std::shared_ptr<Texture2D> m_texture{};
+		std::vector<std::shared_ptr<Component>> m_pComponents{};
+		std::vector<std::shared_ptr<Component>> m_pPhysicsComponents{};
 	};
 }

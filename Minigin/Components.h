@@ -69,4 +69,19 @@ namespace dae
 		std::shared_ptr<Font> m_font{ nullptr };
 		SDL_Color m_Color{ 255,255,255 };
 	};
+
+	class FPSComponent final : public Component
+	{
+	public:
+		FPSComponent(GameObject* pOwner)
+			:Component(pOwner)
+		{};
+
+		void Update(float deltaT) override;
+		float GetNrOfFrames() const { return m_NrOfFrames; };
+
+	private:
+		float m_NrOfFrames{ 0 };
+		TextComponent* m_pOwnerText{ nullptr };
+	};
 }

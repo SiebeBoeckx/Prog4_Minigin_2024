@@ -103,4 +103,30 @@ namespace dae
 	}
 
 #pragma endregion
+#pragma region FPS
+
+	void dae::FPSComponent::Update(float deltaT)
+	{
+		if (m_pOwnerText == nullptr) //Check if the text pointer is set
+		{
+			m_pOwnerText = GetOwner()->GetComponent<TextComponent>(); //This will only happen the first time
+		}
+		else
+		{
+			m_NrOfFrames = 1 / deltaT;
+			//const float roundedNum = std::round(m_NrOfFrames * 10) / 10; // Round to 1 digit after the decimal point
+			std::string printString = std::to_string(m_NrOfFrames);
+
+			// Set precision to 1 decimal place
+			size_t decimalPos = printString.find('.');
+			if (decimalPos != std::string::npos && printString.length() > decimalPos + 2) {
+				printString = printString.substr(0, decimalPos + 2);
+			}
+
+			printString += " FPS";
+			m_pOwnerText->SetText(printString);
+		}
+	}
+
+#pragma endregion
 }

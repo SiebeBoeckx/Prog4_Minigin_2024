@@ -95,6 +95,7 @@ void dae::Minigin::Run(const std::function<void()>& load)
 	{
 		const auto currentTime = high_resolution_clock::now();
 		const float deltaTime = duration<float>(currentTime - lastTime).count();
+		lastTime = currentTime;
 		lag += deltaTime;
 
 		doContinue = input.ProcessInput();

@@ -33,13 +33,9 @@ namespace dae
 		T& AddComponent(Args&&... args)
 		{
 			m_pComponents.emplace_back(std::make_shared<T>(this, std::forward<Args>(args)...));
-
-			//if(typeid(T) == typeid(Transform))
-			//{
-			//	m_localPos = dynamic_cast<Transform*>(m_pComponents.back().get())->GetPosition();
-			//}
 			return *static_cast<T*>(m_pComponents.back().get());
 		}
+
 		template <typename T>
 		void RemoveComponent()
 		{

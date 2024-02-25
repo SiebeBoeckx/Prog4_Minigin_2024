@@ -51,4 +51,22 @@ namespace dae
 		std::shared_ptr<Texture2D> m_texture{ nullptr };
 		const Transform* m_pOwnerTransform{ nullptr };
 	};
+
+	class TextComponent final : public Component
+	{
+	public:
+		TextComponent(GameObject* pOwner, const std::string& text, std::shared_ptr<Font> font);
+		TextComponent(GameObject* pOwner, const std::string& text, std::shared_ptr<Font> font, const SDL_Color& color);
+
+		void Update(float) override;
+
+		void SetText(const std::string& text);
+		void SetColor(Uint8 r, Uint8 g, Uint8 b);
+		void SetColor(const SDL_Color& color);
+	private:
+		bool m_needsUpdate; //Only update at initialize or if text changes
+		std::string m_text;
+		std::shared_ptr<Font> m_font{ nullptr };
+		SDL_Color m_Color{ 255,255,255 };
+	};
 }

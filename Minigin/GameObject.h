@@ -8,12 +8,12 @@ namespace dae
 	class Component;
 
 	// todo: this should become final.
-	class GameObject 
+	class GameObject final
 	{
 	public:
-		virtual void Update(float dt);
-		virtual void PhysicsUpdate(float dt);
-		virtual void Render() const;
+		void Update(float dt);
+		void PhysicsUpdate(float dt);
+		void Render() const;
 
 		void SetPosition(float x, float y);
 		void SetPosition(float x, float y, float z);
@@ -21,7 +21,7 @@ namespace dae
 		const Transform* GetTransform() const { return &m_transform; };
 
 		GameObject() = default;
-		virtual ~GameObject();
+		~GameObject();
 		GameObject(const GameObject& other) = delete;
 		GameObject(GameObject&& other) = delete;
 		GameObject& operator=(const GameObject& other) = delete;

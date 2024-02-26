@@ -8,15 +8,8 @@ namespace dae
 {
 	GameObject::~GameObject() = default;
 
-	void GameObject::Update(float dt)
+	void GameObject::DeletionUpdate()
 	{
-		for (const auto& component : m_pComponents)
-		{
-			glm::vec3 pos{ m_transform.GetPosition() };
-			component->SetPosition(pos.x, pos.y, pos.z);
-			component->Update(dt);
-		}
-
 		//Delete marked components
 		for (auto it{ m_pComponents.begin() }; it != m_pComponents.end(); ++it)
 		{
@@ -26,7 +19,18 @@ namespace dae
 				break;
 			}
 		}
+	}
 
+	void GameObject::Update(float dt)
+	{
+		for (const auto& component : m_pComponents)
+		{
+			glm::vec3 pos{ m_transform.GetPosition() };
+			component->SetPosition(pos.x, pos.y, pos.z);
+			component->Update(dt);
+		}
+
+		DeletionUpdate();
 	}
 
 	void GameObject::PhysicsUpdate(float dt)
@@ -37,6 +41,8 @@ namespace dae
 			component->SetPosition(pos.x, pos.y, pos.z);
 			component->FixedUpdate(dt);
 		}
+
+		DeletionUpdate();
 	}
 
 	void GameObject::Render() const
@@ -60,5 +66,10 @@ namespace dae
 	void GameObject::SetPosition(glm::vec3 pos)
 	{
 		m_transform.SetPosition(pos);
+	}
+
+	void GameObject::MarkComponentForDelete(Component& component)
+	{
+		component.MarkForDelete();
 	}
 }

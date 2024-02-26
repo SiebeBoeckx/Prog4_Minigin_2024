@@ -82,10 +82,13 @@ namespace dae
 		{};
 
 		void Update(float deltaT) override;
-		float GetNrOfFrames() const { return m_NrOfFrames; };
+		float GetNrOfFrames() const { return m_LastFPS; };
 
 	private:
-		float m_NrOfFrames{ 0 };
+		int m_Count{ 0 };
+		const float m_MaxTimeBetweenUpdates{ 0.3f };
+		float m_Delay{ 0.f };
+		float m_LastFPS{ 0.f };
 		TextComponent* m_pOwnerText{ nullptr };
 	};
 }

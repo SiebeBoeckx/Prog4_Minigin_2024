@@ -124,18 +124,25 @@ namespace dae
 		}
 		else
 		{
-			m_NrOfFrames = 1 / deltaT;
-			//const float roundedNum = std::round(m_NrOfFrames * 10) / 10; // Round to 1 digit after the decimal point
-			std::string printString = std::to_string(m_NrOfFrames);
+			m_Delay += deltaT;
+			++m_Count;
+			if (m_Delay >= m_MaxTimeBetweenUpdates)
+			{
+				m_LastFPS = m_Count / m_MaxTimeBetweenUpdates;
+				//const float roundedNum = std::round(m_NrOfFrames * 10) / 10; // Round to 1 digit after the decimal point
+				std::string printString = std::to_string(m_LastFPS);
 
-			// Set precision to 1 decimal place
-			size_t decimalPos = printString.find('.');
-			if (decimalPos != std::string::npos && printString.length() > decimalPos + 2) {
-				printString = printString.substr(0, decimalPos + 2);
+				// Set precision to 1 decimal place
+				size_t decimalPos = printString.find('.');
+				if (decimalPos != std::string::npos && printString.length() > decimalPos + 2) {
+					printString = printString.substr(0, decimalPos + 2);
+				}
+
+				printString += " FPS";
+				m_pOwnerText->SetText(printString);
+				m_Count = 0;
+				m_Delay -= m_MaxTimeBetweenUpdates;
 			}
-
-			printString += " FPS";
-			m_pOwnerText->SetText(printString);
 		}
 	}
 

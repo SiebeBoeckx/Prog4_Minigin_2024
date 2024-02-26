@@ -19,7 +19,7 @@ namespace dae
 		void SetPosition(glm::vec3 pos);
 		const Transform* GetTransform() const { return &m_transform; };
 
-		void MarkComponentForDelete(Component& component) { component.MarkForDelete(); };
+		void MarkComponentForDelete(Component& component);
 
 		GameObject() = default;
 		~GameObject();
@@ -82,5 +82,7 @@ namespace dae
 		Transform m_transform{};
 		std::vector<std::shared_ptr<Component>> m_pComponents{};
 		std::vector<std::shared_ptr<Component>> m_pPhysicsComponents{};
+
+		void DeletionUpdate();
 	};
 }

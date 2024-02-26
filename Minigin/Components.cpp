@@ -10,7 +10,7 @@ namespace dae
 {
 #pragma region Render
 
-	void RenderComponent::Update(float)
+	void TextureComponent::Update(float)
 	{
 		if (m_pOwnerTransform == nullptr) //Check if the transform pointer is set
 		{
@@ -19,7 +19,7 @@ namespace dae
 		//or every update if there's no transform, this need optimization but don't know how
 	}
 
-	void RenderComponent::Render() const
+	void TextureComponent::Render() const
 	{
 		const float textureWidthOffset = m_texture->GetSize().x / 2.f;
 		const float textureHeightOffset = m_texture->GetSize().y / 2.f;
@@ -34,12 +34,12 @@ namespace dae
 		}
 	}
 
-	void RenderComponent::SetTexture(const std::string& filename)
+	void TextureComponent::SetTexture(const std::string& filename)
 	{
 		m_texture = ResourceManager::GetInstance().LoadTexture(filename);
 	}
 
-	void RenderComponent::SetTexture(const std::shared_ptr<Texture2D>& texture)
+	void TextureComponent::SetTexture(const std::shared_ptr<Texture2D>& texture)
 	{
 		m_texture = texture;
 	}
@@ -78,7 +78,7 @@ namespace dae
 				throw std::runtime_error(std::string("Create text texture from surface failed: ") + SDL_GetError());
 			}
 			SDL_FreeSurface(surf);
-			GetOwner()->GetComponent<RenderComponent>()->SetTexture(std::make_shared<Texture2D>(texture));
+			GetOwner()->GetComponent<TextureComponent>()->SetTexture(std::make_shared<Texture2D>(texture));
 			m_needsUpdate = false;
 		}
 	}

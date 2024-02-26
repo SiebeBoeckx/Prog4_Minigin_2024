@@ -35,10 +35,10 @@ namespace dae
 		GameObject* m_pOwner{ nullptr };
 	};
 
-	class RenderComponent final : public Component
+	class TextureComponent final : public Component
 	{
 	public:
-		RenderComponent(GameObject* pOwner)
+		TextureComponent(GameObject* pOwner)
 			:Component(pOwner)
 		{};
 

@@ -68,6 +68,7 @@ namespace dae
 		std::string m_text;
 		std::shared_ptr<Font> m_font{ nullptr };
 		SDL_Color m_Color{ 255,255,255 };
+		TextureComponent* m_pOwnerTexture{ nullptr };
 	};
 
 	class FPSComponent final : public Component

@@ -21,6 +21,10 @@ namespace dae
 
 	void TextureComponent::Render() const
 	{
+		if (m_texture == nullptr)
+		{
+			return;
+		}
 		const float textureWidthOffset = m_texture->GetSize().x / 2.f;
 		const float textureHeightOffset = m_texture->GetSize().y / 2.f;
 		if (m_pOwnerTransform == nullptr) //Check if the transform pointer is set
@@ -63,23 +67,30 @@ namespace dae
 	{
 	}
 
-	void TextComponent::Update([[maybe_unused]] float deltaT)
+	void TextComponent::Update(float)
 	{
 		if (m_needsUpdate)
 		{
-			const auto surf = TTF_RenderText_Blended(m_font->GetFont(), m_text.c_str(), m_Color);
-			if (surf == nullptr)
+			if (m_pOwnerTexture == nullptr) //Check if the transform pointer is set
 			{
-				throw std::runtime_error(std::string("Render text failed: ") + SDL_GetError());
+				m_pOwnerTexture = GetOwner()->GetComponent<TextureComponent>(); //This will only happen the first time
 			}
-			auto texture = SDL_CreateTextureFromSurface(Renderer::GetInstance().GetSDLRenderer(), surf);
-			if (texture == nullptr)
+			else
 			{
-				throw std::runtime_error(std::string("Create text texture from surface failed: ") + SDL_GetError());
+				const auto surf = TTF_RenderText_Blended(m_font->GetFont(), m_text.c_str(), m_Color);
+				if (surf == nullptr)
+				{
+					throw std::runtime_error(std::string("Render text failed: ") + SDL_GetError());
+				}
+				auto texture = SDL_CreateTextureFromSurface(Renderer::GetInstance().GetSDLRenderer(), surf);
+				if (texture == nullptr)
+				{
+					throw std::runtime_error(std::string("Create text texture from surface failed: ") + SDL_GetError());
+				}
+				SDL_FreeSurface(surf);
+				m_pOwnerTexture->SetTexture(std::make_shared<Texture2D>(texture));
+				m_needsUpdate = false;
 			}
-			SDL_FreeSurface(surf);
-			GetOwner()->GetComponent<TextureComponent>()->SetTexture(std::make_shared<Texture2D>(texture));
-			m_needsUpdate = false;
 		}
 	}
 

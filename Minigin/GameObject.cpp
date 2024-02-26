@@ -12,9 +12,9 @@ namespace dae
 	{
 		for (const auto& component : m_pComponents)
 		{
-			component->Update(dt);
 			glm::vec3 pos{ m_transform.GetPosition() };
 			component->SetPosition(pos.x, pos.y, pos.z);
+			component->Update(dt);
 		}
 	}
 
@@ -22,9 +22,9 @@ namespace dae
 	{
 		for (const auto& component : m_pPhysicsComponents)
 		{
-			component->Update(dt);
 			glm::vec3 pos{ m_transform.GetPosition() };
 			component->SetPosition(pos.x, pos.y, pos.z);
+			component->FixedUpdate(dt);
 		}
 	}
 

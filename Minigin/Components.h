@@ -22,13 +22,12 @@ namespace dae
 
 		virtual void BeginPlay() {};
 		virtual void Update(float) {};
+		virtual void FixedUpdate(float) {};
 		virtual void Render() const {};
-		virtual void RenderUI() const {};
 		virtual void SetPosition(float, float, float) {};
 		virtual void SetPosition(glm::vec3) {};
 
 		const GameObject* GetOwner() const { return m_pOwner; };
-		GameObject* GetChangeableOwner() const { return m_pOwner; };
 	protected:
 		explicit Component(GameObject* pOwner) : m_pOwner(pOwner) {};
 	private:

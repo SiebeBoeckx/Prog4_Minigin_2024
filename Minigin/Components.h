@@ -28,10 +28,14 @@ namespace dae
 		virtual void SetPosition(glm::vec3) {};
 
 		const GameObject* GetOwner() const { return m_pOwner; };
+		void MarkForDelete() { m_MarkForDelete = true; };
+		const bool GetMarkForDelete() const { return m_MarkForDelete; };
+
 	protected:
 		explicit Component(GameObject* pOwner) : m_pOwner(pOwner) {};
 	private:
 		GameObject* m_pOwner{ nullptr };
+		bool m_MarkForDelete{ false };
 	};
 
 	class TextureComponent final : public Component

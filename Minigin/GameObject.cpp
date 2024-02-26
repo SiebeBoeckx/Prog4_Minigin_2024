@@ -16,6 +16,17 @@ namespace dae
 			component->SetPosition(pos.x, pos.y, pos.z);
 			component->Update(dt);
 		}
+
+		//Delete marked components
+		for (auto it{ m_pComponents.begin() }; it != m_pComponents.end(); ++it)
+		{
+			if (it->get()->GetMarkForDelete())
+			{
+				m_pComponents.erase(it);
+				break;
+			}
+		}
+
 	}
 
 	void GameObject::PhysicsUpdate(float dt)

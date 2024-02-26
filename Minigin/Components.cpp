@@ -8,7 +8,7 @@
 
 namespace dae
 {
-#pragma region Render
+#pragma region Texture
 
 	void TextureComponent::Update(float)
 	{

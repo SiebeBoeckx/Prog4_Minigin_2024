@@ -19,6 +19,8 @@ namespace dae
 		void SetPosition(glm::vec3 pos);
 		const Transform* GetTransform() const { return &m_transform; };
 
+		void MarkComponentForDelete(Component& component) { component.MarkForDelete(); };
+
 		GameObject() = default;
 		~GameObject();
 		GameObject(const GameObject& other) = delete;

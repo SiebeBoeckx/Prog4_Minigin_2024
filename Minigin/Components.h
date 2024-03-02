@@ -27,7 +27,7 @@ namespace dae
 		virtual void SetPosition(float, float, float) {};
 		virtual void SetPosition(glm::vec3) {};
 
-		const GameObject* GetOwner() const { return m_pOwner; };
+		GameObject* GetOwner() const { return m_pOwner; };
 		void MarkForDelete() { m_MarkForDelete = true; };
 		const bool GetMarkForDelete() const { return m_MarkForDelete; };
 
@@ -90,5 +90,25 @@ namespace dae
 		float m_Delay{ 0.f };
 		float m_LastFPS{ 0.f };
 		TextComponent* m_pOwnerText{ nullptr };
+	};
+
+	class Encircle final : public Component
+	{
+	public:
+		Encircle(GameObject* pOwner, float distance = 0.f, float secPerRotation = 1.f, bool clockwise = true)
+			:Component(pOwner)
+			, m_Distance(distance)
+			, m_SecPerRotation(secPerRotation)
+			, m_isRotatingClockwise(clockwise)
+		{};
+
+		void Update(float deltaT) override;
+	private:
+		glm::vec3 m_Offset{};
+		float m_Distance{};
+		float m_SecPerRotation{};
+		float m_Time{};
+		bool m_isRotatingClockwise{};
+		GameObject* m_pOwner{ nullptr };
 	};
 }

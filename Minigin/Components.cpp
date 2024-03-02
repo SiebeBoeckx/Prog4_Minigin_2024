@@ -146,4 +146,33 @@ namespace dae
 	}
 
 #pragma endregion
+#pragma region Encircle
+	void Encircle::Update(float deltaT)
+	{
+		if (m_pOwner == nullptr)
+		{
+			m_pOwner = GetOwner();
+		}
+		else
+		{
+			float multiplier{ 1 };//+ for anti-clockwise rotation, + for clockwise, could be variable
+			if (m_isRotatingClockwise)
+			{
+				multiplier = -1;
+			}
+
+			m_Time += deltaT;
+			if (m_Time >= m_SecPerRotation)
+			{
+				m_Time -= m_SecPerRotation;
+			}
+
+			m_Offset.x = m_Distance * cosf(multiplier * (static_cast<float>(2 * M_PI) / m_SecPerRotation) * m_Time);
+			m_Offset.y = m_Distance * sinf(multiplier * (static_cast<float>(2 * M_PI) / m_SecPerRotation) * m_Time);
+
+			m_pOwner->SetLocalPosition(glm::vec3(m_Offset.x, m_Offset.y, 0.f));
+			m_pOwner->SetPositionDirty();
+		}
+	}
 }
+#pragma endregion

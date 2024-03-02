@@ -52,7 +52,7 @@ namespace dae
 		std::shared_ptr<Texture2D> GetTexturePtr() const { return m_texture; };
 	private:
 		std::shared_ptr<Texture2D> m_texture{ nullptr };
-		const Transform* m_pOwnerTransform{ nullptr };
+		const Transform* m_pOwnerGlobalTransform{ nullptr };
 	};
 
 	class TextComponent final : public Component

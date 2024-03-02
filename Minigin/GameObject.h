@@ -14,10 +14,19 @@ namespace dae
 		void PhysicsUpdate(float dt);
 		void Render() const;
 
-		void SetPosition(float x, float y);
-		void SetPosition(float x, float y, float z);
-		void SetPosition(glm::vec3 pos);
-		const Transform* GetTransform() const { return &m_transform; };
+		//void SetPosition(float x, float y);
+		//void SetPosition(float x, float y, float z);
+		//void SetPosition(glm::vec3 pos);
+		void SetLocalPosition(const glm::vec3& pos);
+		void SetLocalPosition(float x, float y);
+		void SetLocalPosition(float x, float y, float z);
+		void SetPositionDirty();
+		const glm::vec3& GetLocalPosition() const;
+		const glm::vec3& GetWorldPosition();
+		void UpdateWorldPosition();
+
+		const Transform* GetLocalTransform() const { return &m_localTransform; };
+		const Transform* GetGlobalTransform() const { return &m_globalTransform; };
 
 		void MarkComponentForDelete(Component& component);
 
@@ -78,11 +87,23 @@ namespace dae
 			return false;
 		}
 #pragma endregion
+
+		void SetParent(GameObject* pParent, bool keepWorldPosition = false);
+		const std::vector<GameObject*>& GetChildren() const { return m_pChildren; };
+
 	private:
-		Transform m_transform{};
 		std::vector<std::shared_ptr<Component>> m_pComponents{};
 		std::vector<std::shared_ptr<Component>> m_pPhysicsComponents{};
 
+		Transform m_localTransform{};
+		Transform m_globalTransform{};
+		bool m_positionIsDirty{ true };
+		GameObject* m_pParent{ nullptr };
+		std::vector<GameObject*> m_pChildren{};
+
 		void DeletionUpdate();
+		void AddChild(GameObject* child);
+		void RemoveChild(GameObject* child);
+		bool IsChild(GameObject* object);
 	};
 }

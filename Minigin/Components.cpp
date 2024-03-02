@@ -12,11 +12,10 @@ namespace dae
 
 	void TextureComponent::Update(float)
 	{
-		if (m_pOwnerTransform == nullptr) //Check if the transform pointer is set
+		if (m_pOwnerGlobalTransform == nullptr) //Check if the transform pointer is set
 		{
-			m_pOwnerTransform = GetOwner()->GetTransform(); //This will only happen the first time
+			m_pOwnerGlobalTransform = GetOwner()->GetGlobalTransform(); //This will only happen the first time
 		}
-		//or every update if there's no transform, this need optimization but don't know how
 	}
 
 	void TextureComponent::Render() const
@@ -27,13 +26,13 @@ namespace dae
 		}
 		const float textureWidthOffset = m_texture->GetSize().x / 2.f;
 		const float textureHeightOffset = m_texture->GetSize().y / 2.f;
-		if (m_pOwnerTransform == nullptr) //Check if the transform pointer is set
+		if (m_pOwnerGlobalTransform == nullptr ) //Check if the transform pointer is set
 		{
 			Renderer::GetInstance().RenderTexture(*m_texture, -textureWidthOffset, -textureHeightOffset);
 		}
-		else
+		else //transform pointer set
 		{
-			const auto& pos = m_pOwnerTransform->GetPosition();
+			const auto& pos = m_pOwnerGlobalTransform->GetPosition();
 			Renderer::GetInstance().RenderTexture(*m_texture, pos.x - textureWidthOffset, pos.y - textureHeightOffset);
 		}
 	}

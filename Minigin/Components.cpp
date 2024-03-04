@@ -5,6 +5,7 @@
 #include "Renderer.h"
 #include "Texture2D.h"
 #include "Font.h"
+#include <format>
 
 namespace dae
 {
@@ -128,17 +129,10 @@ namespace dae
 			if (m_Delay >= m_MaxTimeBetweenUpdates)
 			{
 				m_LastFPS = m_Count / m_MaxTimeBetweenUpdates;
-				//const float roundedNum = std::round(m_NrOfFrames * 10) / 10; // Round to 1 digit after the decimal point
-				std::string printString = std::to_string(m_LastFPS);
 
-				// Set precision to 1 decimal place
-				size_t decimalPos = printString.find('.');
-				if (decimalPos != std::string::npos && printString.length() > decimalPos + 2) {
-					printString = printString.substr(0, decimalPos + 2);
-				}
-
-				printString += " FPS";
+				std::string printString = std::format("{:.1f} FPS", m_LastFPS);
 				m_pOwnerText->SetText(printString);
+
 				m_Count = 0;
 				m_Delay -= m_MaxTimeBetweenUpdates;
 			}

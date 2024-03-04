@@ -93,7 +93,6 @@ namespace dae
 
 	private:
 		std::vector<std::shared_ptr<Component>> m_pComponents{};
-		std::vector<std::shared_ptr<Component>> m_pPhysicsComponents{};
 
 		Transform m_localTransform{};
 		Transform m_globalTransform{};

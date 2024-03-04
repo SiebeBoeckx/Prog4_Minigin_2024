@@ -79,7 +79,7 @@ namespace dae
 		for (const auto& component : m_pComponents)
 		{
 			glm::vec3 pos{ GetWorldPosition() };
-			component->SetPosition(pos.x, pos.y, pos.z);
+			//component->SetPosition(pos.x, pos.y, pos.z);
 			component->Update(dt);
 		}
 
@@ -88,10 +88,10 @@ namespace dae
 
 	void GameObject::PhysicsUpdate(float dt)
 	{
-		for (const auto& component : m_pPhysicsComponents)
+		for (const auto& component : m_pComponents)
 		{
 			glm::vec3 pos{ GetWorldPosition() };
-			component->SetPosition(pos.x, pos.y, pos.z);
+			//component->SetPosition(pos.x, pos.y, pos.z);
 			component->FixedUpdate(dt);
 		}
 

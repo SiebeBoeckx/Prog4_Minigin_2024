@@ -14,6 +14,7 @@ namespace dae
 		{
 			return;
 		}
+
 		if (pParent == nullptr)
 		{
 			SetLocalPosition(GetWorldPosition());
@@ -22,10 +23,11 @@ namespace dae
 		{
 			if (keepWorldPosition)
 			{
-				SetLocalPosition(GetWorldPosition() - pParent->GetWorldPosition());
+				SetLocalPosition(GetWorldPosition() - pParent->GetWorldPosition()); //Position set dirty in SetLocalPosition()
 			}
 			SetPositionDirty();
 		}
+
 		if (m_pParent)
 		{
 			m_pParent->RemoveChild(this);
@@ -126,6 +128,10 @@ namespace dae
 
 	void GameObject::SetPositionDirty()
 	{
+		if (m_positionIsDirty) //No need if already set
+		{
+			return;
+		}
 		m_positionIsDirty = true;
 		for (const auto& child : m_pChildren)
 		{

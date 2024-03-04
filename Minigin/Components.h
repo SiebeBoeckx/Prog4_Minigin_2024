@@ -95,20 +95,18 @@ namespace dae
 	class Encircle final : public Component
 	{
 	public:
-		Encircle(GameObject* pOwner, float distance = 0.f, float secPerRotation = 1.f, bool clockwise = true)
+		Encircle(GameObject* pOwner, float distance = 0.f, float rotationsPerSec = 1.f)
 			:Component(pOwner)
 			, m_Distance(distance)
-			, m_SecPerRotation(secPerRotation)
-			, m_isRotatingClockwise(clockwise)
+			, m_RotationsPerSec(rotationsPerSec)
 		{};
 
 		void Update(float deltaT) override;
 	private:
 		glm::vec3 m_Offset{};
 		float m_Distance{};
-		float m_SecPerRotation{};
-		float m_Time{};
+		float m_RotationsPerSec{};
+		float m_Angle{};
 		bool m_isRotatingClockwise{};
-		GameObject* m_pOwner{ nullptr };
 	};
 }

@@ -6,6 +6,7 @@
 #include "Texture2D.h"
 #include "Font.h"
 #include <format>
+#include <numbers>
 
 namespace dae
 {
@@ -142,31 +143,19 @@ namespace dae
 #pragma endregion
 #pragma region Encircle
 	void Encircle::Update(float deltaT)
-	{
-		if (m_pOwner == nullptr)
+	{	
+		const float twoPi{ static_cast<float>(std::numbers::pi) * 2 };
+		m_Angle += m_RotationsPerSec * deltaT;
+
+		if (m_Angle >= twoPi)
 		{
-			m_pOwner = GetOwner();
+			m_Angle -= twoPi;
 		}
-		else
-		{
-			float multiplier{ 1 };//+ for anti-clockwise rotation, + for clockwise, could be variable
-			if (m_isRotatingClockwise)
-			{
-				multiplier = -1;
-			}
 
-			m_Time += deltaT;
-			if (m_Time >= m_SecPerRotation)
-			{
-				m_Time -= m_SecPerRotation;
-			}
+		m_Offset.x = m_Distance * glm::cos(m_Angle);
+		m_Offset.y = m_Distance * glm::sin(m_Angle);
 
-			m_Offset.x = m_Distance * cosf(multiplier * (static_cast<float>(2 * M_PI) / m_SecPerRotation) * m_Time);
-			m_Offset.y = m_Distance * sinf(multiplier * (static_cast<float>(2 * M_PI) / m_SecPerRotation) * m_Time);
-
-			m_pOwner->SetLocalPosition(glm::vec3(m_Offset.x, m_Offset.y, 0.f));
-			m_pOwner->SetPositionDirty();
-		}
+		GetOwner()->SetLocalPosition(glm::vec3(m_Offset.x, m_Offset.y, 0.f));	
 	}
 }
 #pragma endregion

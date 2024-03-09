@@ -340,7 +340,7 @@ namespace dae
             for (int count{ 0 }; count < *m_pSamples; ++count)
             {
                 startTime = std::chrono::high_resolution_clock::now();
-                for (int i{ 0 }; i < objectBuffer->size(); i += stepsize)
+                for (size_t i{ 0 }; i < objectBuffer->size(); i += stepsize)
                 {
                     (*objectBuffer)[i] *= 2;
                 }
@@ -411,7 +411,7 @@ namespace dae
             for (int count{ 0 }; count < *m_pSamples; ++count)
             {
                 startTime = std::chrono::high_resolution_clock::now();
-                for (int i{ 0 }; i < objectBuffer->size(); i += stepsize)
+                for (size_t i{ 0 }; i < objectBuffer->size(); i += stepsize)
                 {
                     (*objectBuffer)[i].id *= 2;
                 }
@@ -481,7 +481,7 @@ namespace dae
             for (int count{ 0 }; count < *m_pSamples; ++count)
             {
                 startTime = std::chrono::high_resolution_clock::now();
-                for (int i{ 0 }; i < objectBuffer->size(); i += stepsize)
+                for (size_t i{ 0 }; i < objectBuffer->size(); i += stepsize)
                 {
                     (*objectBuffer)[i].id *= 2;
                 }

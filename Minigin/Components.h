@@ -109,4 +109,66 @@ namespace dae
 		float m_Angle{};
 		bool m_isRotatingClockwise{};
 	};
+
+	class ImGuiComponent final : public Component
+	{
+	public:
+		ImGuiComponent(GameObject* pOwner)
+			:Component(pOwner)
+			//,m_pString{new std::string{}}
+			, m_pExercise1Results{new std::vector<float>{}}
+			, m_pExercise2Results{new std::vector<float>{}}
+			, m_pExercise2AltResults{new std::vector<float>{}}
+		{};
+
+		~ImGuiComponent() override
+		{
+			//delete m_pString;
+
+			delete m_pSamples;
+			delete m_pExercise2AltResults;
+			delete m_pExercise2Results;
+			delete m_pExercise1Results;
+		} 
+
+		void Render() const override;
+
+	private:
+		struct transform
+		{
+			float matrix[16] = {
+				1,0,0,0,
+				0,1,0,0,
+				0,0,1,0,
+				0,0,0,1
+			};
+		};
+
+		class GameObject3D
+		{
+		public:
+			transform local;
+			int id;
+		};
+
+		class GameObject3DAlt
+		{
+		public:
+			transform* local;
+			int id;
+		};
+
+		void RunExercises() const;
+
+		void Exercise1() const;
+		void Exercise2() const;
+		void Exercise2Alt() const;
+
+		//std::string* m_pString{};
+
+		std::vector<float>* m_pExercise1Results{};
+		std::vector<float>* m_pExercise2Results{};
+		std::vector<float>* m_pExercise2AltResults{};
+		int* m_pSamples{ new int{ 100 } };
+	};
 }

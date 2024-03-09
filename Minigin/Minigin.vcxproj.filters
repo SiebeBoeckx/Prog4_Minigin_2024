@@ -81,6 +81,9 @@
     <ClInclude Include="..\3rdParty\imgui\backends\imgui_impl_opengl3.h">
       <Filter>imgui</Filter>
     </ClInclude>
+    <ClInclude Include="..\3rdParty\imgui\imgui_plot.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ResourceManager.cpp">
@@ -141,6 +144,9 @@
       <Filter>imgui</Filter>
     </ClCompile>
     <ClCompile Include="..\3rdParty\imgui\backends\imgui_impl_opengl3.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\imgui\imgui_plot.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
   </ItemGroup>

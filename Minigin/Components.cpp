@@ -11,9 +11,9 @@
 #include <iostream>
 #include <algorithm>
 
-#include <backends/imgui_impl_opengl3.h>
-#include <backends/imgui_impl_sdl2.h>
-#include <imgui_plot.h>
+#include "backends/imgui_impl_opengl3.h"
+#include "backends/imgui_impl_sdl2.h"
+#include "imgui_plot.h"
 
 namespace dae
 {
@@ -166,12 +166,11 @@ namespace dae
 	}
 #pragma endregion
 #pragma region ImGui
-	void ImGuiComponent::Render() const
+	void ImGuiComponent::RenderUI() const
 	{
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplSDL2_NewFrame();
-		ImGui::NewFrame();
-
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplSDL2_NewFrame();
+        ImGui::NewFrame();
 		// Create a simple menu
 		ImGui::Begin("Clear the cache + ImGui exercise");
         ImGui::InputInt("# Samples", m_pSamples);
@@ -186,7 +185,7 @@ namespace dae
         //ImGui::Text("%s", (*m_pString).c_str());
 
         std::vector<float> xValues{ 1,2,4,8,16,32,64,128,256,512,1024 };
-        static ImU32 colors[3] = { ImColor(0, 255, 0), ImColor(255, 0, 255) };
+        static ImU32 colors[2] = { ImColor(0, 255, 0), ImColor(255, 0, 255) };
 
         //Exercises
 #pragma region Exercise 1
@@ -303,13 +302,13 @@ namespace dae
         }
 
         ImGui::EndChild();
-#pragma endregion
+#pragma endregion	
 
-		ImGui::End();
+        ImGui::End();
 
-		// Rendering
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        // Rendering
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	}
 
 	void ImGuiComponent::RunExercises() const
@@ -322,12 +321,12 @@ namespace dae
     void ImGuiComponent::Exercise1() const
     {
         m_pExercise1Results->clear();
-        std::vector<int>* objectBuffer = new std::vector<int>();
+        std::vector<int> objectBuffer(1'000'000, 1);
 
-        for (int i{ 0 }; i <= 1'000'000; ++i)
-        {
-            objectBuffer->push_back(1);
-        }
+        //for (int i{ 0 }; i <= 1'000'000; ++i)
+        //{
+        //    objectBuffer->push_back(1);
+        //}
 
         std::chrono::high_resolution_clock::time_point startTime{};
         std::chrono::high_resolution_clock::time_point endTime{};
@@ -340,9 +339,9 @@ namespace dae
             for (int count{ 0 }; count < *m_pSamples; ++count)
             {
                 startTime = std::chrono::high_resolution_clock::now();
-                for (size_t i{ 0 }; i < objectBuffer->size(); i += stepsize)
+                for (size_t i{ 0 }; i < objectBuffer.size(); i += stepsize)
                 {
-                    (*objectBuffer)[i] *= 2;
+                    (objectBuffer)[i] *= 2;
                 }
                 endTime = std::chrono::high_resolution_clock::now();
                 std::chrono::microseconds duration = std::chrono::duration_cast<std::chrono::microseconds>(endTime - startTime);
@@ -386,19 +385,17 @@ namespace dae
         string += '\n';
 
         //*m_pString += string;
-
-        delete objectBuffer;
     }
 
     void ImGuiComponent::Exercise2() const
     {
         m_pExercise2Results->clear();
-        std::vector<GameObject3D>* objectBuffer = new std::vector<GameObject3D>();
+        std::vector<GameObject3D> objectBuffer(1'000'000, GameObject3D{});
 
-        for (int i{ 0 }; i <= 1'000'000; ++i)
-        {
-            objectBuffer->push_back(GameObject3D{});
-        }
+        //for (int i{ 0 }; i <= 1'000'000; ++i)
+        //{
+        //    objectBuffer->push_back(GameObject3D{});
+        //}
 
         std::chrono::high_resolution_clock::time_point startTime{};
         std::chrono::high_resolution_clock::time_point endTime{};
@@ -411,9 +408,9 @@ namespace dae
             for (int count{ 0 }; count < *m_pSamples; ++count)
             {
                 startTime = std::chrono::high_resolution_clock::now();
-                for (size_t i{ 0 }; i < objectBuffer->size(); i += stepsize)
+                for (size_t i{ 0 }; i < objectBuffer.size(); i += stepsize)
                 {
-                    (*objectBuffer)[i].id *= 2;
+                    (objectBuffer)[i].id *= 2;
                 }
                 endTime = std::chrono::high_resolution_clock::now();
                 std::chrono::microseconds duration = std::chrono::duration_cast<std::chrono::microseconds>(endTime - startTime);
@@ -456,19 +453,17 @@ namespace dae
         }
         string += '\n';
         //*m_pString += string;
-
-        delete objectBuffer;
     }
 
     void ImGuiComponent::Exercise2Alt() const
     {
         m_pExercise2AltResults->clear();
-        std::vector<GameObject3DAlt>* objectBuffer = new std::vector<GameObject3DAlt>();
+        std::vector<GameObject3DAlt> objectBuffer(1'000'000, GameObject3DAlt{});
 
-        for (int i{ 0 }; i <= 1'000'000; ++i)
-        {
-            objectBuffer->push_back(GameObject3DAlt{});
-        }
+        //for (int i{ 0 }; i <= 1'000'000; ++i)
+        //{
+        //    objectBuffer->push_back(GameObject3DAlt{});
+        //}
 
         std::chrono::high_resolution_clock::time_point startTime{};
         std::chrono::high_resolution_clock::time_point endTime{};
@@ -481,9 +476,9 @@ namespace dae
             for (int count{ 0 }; count < *m_pSamples; ++count)
             {
                 startTime = std::chrono::high_resolution_clock::now();
-                for (size_t i{ 0 }; i < objectBuffer->size(); i += stepsize)
+                for (size_t i{ 0 }; i < objectBuffer.size(); i += stepsize)
                 {
-                    (*objectBuffer)[i].id *= 2;
+                    (objectBuffer)[i].id *= 2;
                 }
                 endTime = std::chrono::high_resolution_clock::now();
                 std::chrono::microseconds duration = std::chrono::duration_cast<std::chrono::microseconds>(endTime - startTime);
@@ -526,8 +521,6 @@ namespace dae
         }
         string += '\n';
         //*m_pString += string;
-
-        delete objectBuffer;
     }
 #pragma endregion
 }

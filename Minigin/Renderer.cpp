@@ -5,8 +5,8 @@
 #include "GameObject.h"
 #include "Texture2D.h"
 
-#include <backends/imgui_impl_sdl2.h>
-#include <backends/imgui_impl_opengl3.h>
+#include "backends/imgui_impl_sdl2.h"
+#include "backends/imgui_impl_opengl3.h"
 
 int GetOpenGLDriverIndex()
 {
@@ -43,11 +43,26 @@ void dae::Renderer::Render() const
 	SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
 	SDL_RenderClear(m_renderer);
 
+	//SceneManager::GetInstance().RenderUI();
 	SceneManager::GetInstance().Render();
-
-	//RenderDemoWindow();
 	
 	SDL_RenderPresent(m_renderer);
+}
+
+void dae::Renderer::RenderUI() const
+{
+	//ImGui_ImplOpenGL3_NewFrame();
+	//ImGui_ImplSDL2_NewFrame();
+	//ImGui::NewFrame();
+
+	RenderDemoWindow();
+	//SceneManager::GetInstance().RenderUI();
+
+	//ImGui::End();
+
+	// Rendering
+	//ImGui::Render();
+	//ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 void dae::Renderer::Destroy()

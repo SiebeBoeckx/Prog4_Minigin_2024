@@ -24,6 +24,7 @@ namespace dae
 		virtual void Update(float) {};
 		virtual void FixedUpdate(float) {};
 		virtual void Render() const {};
+		virtual void RenderUI() const {};
 		virtual void SetPosition(float, float, float) {};
 		virtual void SetPosition(glm::vec3) {};
 
@@ -131,7 +132,7 @@ namespace dae
 			delete m_pExercise1Results;
 		} 
 
-		void Render() const override;
+		void RenderUI() const override;
 
 	private:
 		struct transform

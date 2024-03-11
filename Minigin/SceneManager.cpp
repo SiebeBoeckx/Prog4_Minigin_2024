@@ -25,6 +25,14 @@ void dae::SceneManager::Render()
 	}
 }
 
+void dae::SceneManager::RenderUI()
+{
+	for (const auto& scene : m_scenes)
+	{
+		scene->RenderUI();
+	}
+}
+
 dae::Scene& dae::SceneManager::CreateScene(const std::string& name)
 {
 	m_scenes.emplace_back(std::make_unique<Scene>(name));

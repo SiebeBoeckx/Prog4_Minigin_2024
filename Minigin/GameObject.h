@@ -13,6 +13,7 @@ namespace dae
 		void Update(float dt);
 		void PhysicsUpdate(float dt);
 		void Render() const;
+		void RenderUI() const;
 
 		//void SetPosition(float x, float y);
 		//void SetPosition(float x, float y, float z);

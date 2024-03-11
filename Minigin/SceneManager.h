@@ -15,6 +15,7 @@ namespace dae
 		void Update(float dt);
 		void PhysicsUpdate(float dt);
 		void Render();
+		void RenderUI();
 	private:
 		friend class Singleton<SceneManager>;
 		SceneManager() = default;

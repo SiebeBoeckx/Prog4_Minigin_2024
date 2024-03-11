@@ -16,6 +16,7 @@ namespace dae
 		void Update(float dt);
 		void PhysicsUpdate(float dt);
 		void Render() const;
+		void RenderUI() const;
 
 		explicit Scene(const std::string& name);
 		~Scene();

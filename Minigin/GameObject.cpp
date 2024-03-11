@@ -108,6 +108,14 @@ namespace dae
 		}
 	}
 
+	void GameObject::RenderUI() const
+	{
+		for (const auto& component : m_pComponents)
+		{
+			component->RenderUI();
+		}
+	}
+
 	void GameObject::SetLocalPosition(const glm::vec3& pos)
 	{
 		m_localTransform.SetPosition(pos);

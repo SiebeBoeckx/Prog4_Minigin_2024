@@ -15,10 +15,10 @@ namespace dae
 		SDL_Color m_clearColor{};	
 
 		void RenderDemoWindow() const;
-	public:
-		void Init(SDL_Window* window);
 		void Render() const;
 		void RenderUI() const;
+	public:
+		void Init(SDL_Window* window);
 		void CombinedRender() const;
 		void Destroy();
 

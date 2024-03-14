@@ -39,30 +39,40 @@ void dae::Renderer::Init(SDL_Window* window)
 
 void dae::Renderer::Render() const
 {
-	const auto& color = GetBackgroundColor();
-	SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
-	SDL_RenderClear(m_renderer);
+	
 
 	//SceneManager::GetInstance().RenderUI();
 	SceneManager::GetInstance().Render();
 	
-	SDL_RenderPresent(m_renderer);
+
 }
 
 void dae::Renderer::RenderUI() const
 {
-	//ImGui_ImplOpenGL3_NewFrame();
-	//ImGui_ImplSDL2_NewFrame();
-	//ImGui::NewFrame();
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplSDL2_NewFrame();
+	ImGui::NewFrame();
 
-	RenderDemoWindow();
-	//SceneManager::GetInstance().RenderUI();
+	//RenderDemoWindow();
+	SceneManager::GetInstance().RenderUI();
 
 	//ImGui::End();
 
 	// Rendering
-	//ImGui::Render();
-	//ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+void dae::Renderer::CombinedRender() const
+{
+	const auto& color = GetBackgroundColor();
+	SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
+	SDL_RenderClear(m_renderer);
+
+	Render();
+	RenderUI();
+
+	SDL_RenderPresent(m_renderer);
 }
 
 void dae::Renderer::Destroy()
@@ -102,10 +112,10 @@ SDL_Renderer* dae::Renderer::GetSDLRenderer() const { return m_renderer; }
 void dae::Renderer::RenderDemoWindow() const
 {
 	//Demo Window ImGui
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplSDL2_NewFrame();
-	ImGui::NewFrame();
+	//ImGui_ImplOpenGL3_NewFrame();
+	//ImGui_ImplSDL2_NewFrame();
+	//ImGui::NewFrame();
 	ImGui::ShowDemoWindow();
-	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	//ImGui::Render();
+	//ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }

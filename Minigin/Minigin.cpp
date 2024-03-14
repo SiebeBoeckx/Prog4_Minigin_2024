@@ -110,8 +110,9 @@ void dae::Minigin::Run(const std::function<void()>& load)
 			lag -= m_FixedTimeStep;
 		}
 		sceneManager.Update(deltaTime);
-		renderer.Render();
-		renderer.RenderUI();
+		//renderer.Render();
+		//renderer.RenderUI();
+		renderer.CombinedRender();
 
 		const auto sleepTime = currentTime + milliseconds(m_MsPerFame) - high_resolution_clock::now();
 		std::this_thread::sleep_for(sleepTime);

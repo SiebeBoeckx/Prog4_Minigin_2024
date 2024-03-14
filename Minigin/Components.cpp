@@ -168,9 +168,9 @@ namespace dae
 #pragma region ImGui
 	void ImGuiComponent::RenderUI() const
 	{
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplSDL2_NewFrame();
-        ImGui::NewFrame();
+        //ImGui_ImplOpenGL3_NewFrame();
+        //ImGui_ImplSDL2_NewFrame();
+        //ImGui::NewFrame();
 		// Create a simple menu
 		ImGui::Begin("Clear the cache + ImGui exercise");
         ImGui::InputInt("# Samples", m_pSamples);
@@ -300,15 +300,16 @@ namespace dae
 
             ImGui::Plot("Exercise 2 Combined", conf);
         }
-
         ImGui::EndChild();
+
 #pragma endregion	
+        //ImGui::EndChild();
 
         ImGui::End();
 
         // Rendering
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        //ImGui::Render();
+       // ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	}
 
 	void ImGuiComponent::RunExercises() const

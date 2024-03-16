@@ -25,7 +25,10 @@ namespace dae
 			{
 				SetLocalPosition(GetWorldPosition() - pParent->GetWorldPosition()); //Position set dirty in SetLocalPosition()
 			}
-			SetPositionDirty();
+			else
+			{
+				SetPositionDirty();
+			}
 		}
 
 		if (m_pParent)
@@ -119,12 +122,6 @@ namespace dae
 	void GameObject::SetLocalPosition(const glm::vec3& pos)
 	{
 		m_localTransform.SetPosition(pos);
-		SetPositionDirty();
-	}
-
-	void GameObject::SetLocalPosition(float x, float y)
-	{
-		m_localTransform.SetPosition(x, y, 0);
 		SetPositionDirty();
 	}
 

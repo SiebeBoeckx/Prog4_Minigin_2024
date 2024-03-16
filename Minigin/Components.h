@@ -1,7 +1,9 @@
 #pragma once
 #include <glm/glm.hpp>
+#include <SDL_ttf.h>
 #include <string>
 #include "GameObject.h"
+#include "Enums.h"
 
 namespace dae
 {
@@ -171,5 +173,19 @@ namespace dae
 		std::vector<float>* m_pExercise2Results{};
 		std::vector<float>* m_pExercise2AltResults{};
 		int* m_pSamples{ new int{ 100 } };
+	};
+
+	class PlayerComponent final : public Component
+	{
+	public:
+		PlayerComponent(dae::GameObject* pOwner, int playerNr, float moveSpeed);
+
+		void Update(float dt) override;
+		void Move(Direction direction);
+	private:
+		const int m_PlayerNr;
+		float m_MovementSpeed;
+
+		float m_DeltaT{};
 	};
 }

@@ -1,5 +1,4 @@
 #include <stdexcept>
-#include <SDL_ttf.h>
 #include "Components.h"
 #include "ResourceManager.h"
 #include "Renderer.h"
@@ -19,168 +18,168 @@ namespace dae
 {
 #pragma region Texture
 
-	void TextureComponent::Update(float)
-	{
-		if (m_pOwnerGlobalTransform == nullptr) //Check if the transform pointer is set
-		{
-			m_pOwnerGlobalTransform = GetOwner()->GetGlobalTransform(); //This will only happen the first time
-		}
-	}
+    void TextureComponent::Update(float)
+    {
+        if (m_pOwnerGlobalTransform == nullptr) //Check if the transform pointer is set
+        {
+            m_pOwnerGlobalTransform = GetOwner()->GetGlobalTransform(); //This will only happen the first time
+        }
+    }
 
-	void TextureComponent::Render() const
-	{
-		if (m_texture == nullptr)
-		{
-			return;
-		}
-		const float textureWidthOffset = m_texture->GetSize().x / 2.f;
-		const float textureHeightOffset = m_texture->GetSize().y / 2.f;
-		if (m_pOwnerGlobalTransform == nullptr ) //Check if the transform pointer is set
-		{
-			Renderer::GetInstance().RenderTexture(*m_texture, -textureWidthOffset, -textureHeightOffset);
-		}
-		else //transform pointer set
-		{
-			const auto& pos = m_pOwnerGlobalTransform->GetPosition();
-			Renderer::GetInstance().RenderTexture(*m_texture, pos.x - textureWidthOffset, pos.y - textureHeightOffset);
-		}
-	}
+    void TextureComponent::Render() const
+    {
+        if (m_texture == nullptr)
+        {
+            return;
+        }
+        const float textureWidthOffset = m_texture->GetSize().x / 2.f;
+        const float textureHeightOffset = m_texture->GetSize().y / 2.f;
+        if (m_pOwnerGlobalTransform == nullptr) //Check if the transform pointer is set
+        {
+            Renderer::GetInstance().RenderTexture(*m_texture, -textureWidthOffset, -textureHeightOffset);
+        }
+        else //transform pointer set
+        {
+            const auto& pos = m_pOwnerGlobalTransform->GetPosition();
+            Renderer::GetInstance().RenderTexture(*m_texture, pos.x - textureWidthOffset, pos.y - textureHeightOffset);
+        }
+    }
 
-	void TextureComponent::SetTexture(const std::string& filename)
-	{
-		m_texture = ResourceManager::GetInstance().LoadTexture(filename);
-	}
+    void TextureComponent::SetTexture(const std::string& filename)
+    {
+        m_texture = ResourceManager::GetInstance().LoadTexture(filename);
+    }
 
-	void TextureComponent::SetTexture(const std::shared_ptr<Texture2D>& texture)
-	{
-		m_texture = texture;
-	}
+    void TextureComponent::SetTexture(const std::shared_ptr<Texture2D>& texture)
+    {
+        m_texture = texture;
+    }
 #pragma endregion
 #pragma region Text
 
-	TextComponent::TextComponent(GameObject* pOwner, const std::string& text, std::shared_ptr<Font> font)
-		:Component(pOwner)
-		, m_needsUpdate(true)
-		, m_text(text)
-		, m_font(std::move(font))
-	{
-	}
+    TextComponent::TextComponent(GameObject* pOwner, const std::string& text, std::shared_ptr<Font> font)
+        :Component(pOwner)
+        , m_needsUpdate(true)
+        , m_text(text)
+        , m_font(std::move(font))
+    {
+    }
 
-	TextComponent::TextComponent(GameObject* pOwner, const std::string& text, std::shared_ptr<Font> font, const SDL_Color& color)
-		:Component(pOwner)
-		, m_needsUpdate(true)
-		, m_text(text)
-		, m_font(std::move(font))
-		, m_Color(color)
-	{
-	}
+    TextComponent::TextComponent(GameObject* pOwner, const std::string& text, std::shared_ptr<Font> font, const SDL_Color& color)
+        :Component(pOwner)
+        , m_needsUpdate(true)
+        , m_text(text)
+        , m_font(std::move(font))
+        , m_Color(color)
+    {
+    }
 
-	void TextComponent::Update(float)
-	{
-		if (m_needsUpdate)
-		{
-			if (m_pOwnerTexture == nullptr) //Check if the transform pointer is set
-			{
-				m_pOwnerTexture = GetOwner()->GetComponent<TextureComponent>(); //This will only happen the first time
-			}
-			else
-			{
-				const auto surf = TTF_RenderText_Blended(m_font->GetFont(), m_text.c_str(), m_Color);
-				if (surf == nullptr)
-				{
-					throw std::runtime_error(std::string("Render text failed: ") + SDL_GetError());
-				}
-				auto texture = SDL_CreateTextureFromSurface(Renderer::GetInstance().GetSDLRenderer(), surf);
-				if (texture == nullptr)
-				{
-					throw std::runtime_error(std::string("Create text texture from surface failed: ") + SDL_GetError());
-				}
-				SDL_FreeSurface(surf);
-				m_pOwnerTexture->SetTexture(std::make_shared<Texture2D>(texture));
-				m_needsUpdate = false;
-			}
-		}
-	}
+    void TextComponent::Update(float)
+    {
+        if (m_needsUpdate)
+        {
+            if (m_pOwnerTexture == nullptr) //Check if the transform pointer is set
+            {
+                m_pOwnerTexture = GetOwner()->GetComponent<TextureComponent>(); //This will only happen the first time
+            }
+            else
+            {
+                const auto surf = TTF_RenderText_Blended(m_font->GetFont(), m_text.c_str(), m_Color);
+                if (surf == nullptr)
+                {
+                    throw std::runtime_error(std::string("Render text failed: ") + SDL_GetError());
+                }
+                auto texture = SDL_CreateTextureFromSurface(Renderer::GetInstance().GetSDLRenderer(), surf);
+                if (texture == nullptr)
+                {
+                    throw std::runtime_error(std::string("Create text texture from surface failed: ") + SDL_GetError());
+                }
+                SDL_FreeSurface(surf);
+                m_pOwnerTexture->SetTexture(std::make_shared<Texture2D>(texture));
+                m_needsUpdate = false;
+            }
+        }
+    }
 
-	// This implementation uses the "dirty flag" pattern
-	void TextComponent::SetText(const std::string& text)
-	{
-		m_text = text;
-		m_needsUpdate = true;
-	}
+    // This implementation uses the "dirty flag" pattern
+    void TextComponent::SetText(const std::string& text)
+    {
+        m_text = text;
+        m_needsUpdate = true;
+    }
 
-	void TextComponent::SetColor(Uint8 r, Uint8 g, Uint8 b)
-	{
-		m_Color.r = r;
-		m_Color.g = g;
-		m_Color.b = b;
-	}
+    void TextComponent::SetColor(Uint8 r, Uint8 g, Uint8 b)
+    {
+        m_Color.r = r;
+        m_Color.g = g;
+        m_Color.b = b;
+    }
 
-	void TextComponent::SetColor(const SDL_Color& color)
-	{
-		m_Color = color;
-	}
+    void TextComponent::SetColor(const SDL_Color& color)
+    {
+        m_Color = color;
+    }
 
 #pragma endregion
 #pragma region FPS
 
-	void dae::FPSComponent::Update(float deltaT)
-	{
-		if (m_pOwnerText == nullptr) //Check if the text pointer is set
-		{
-			m_pOwnerText = GetOwner()->GetComponent<TextComponent>(); //This will only happen the first time
-		}
-		else
-		{
-			m_Delay += deltaT;
-			++m_Count;
-			if (m_Delay >= m_MaxTimeBetweenUpdates)
-			{
-				m_LastFPS = m_Count / m_MaxTimeBetweenUpdates;
+    void dae::FPSComponent::Update(float deltaT)
+    {
+        if (m_pOwnerText == nullptr) //Check if the text pointer is set
+        {
+            m_pOwnerText = GetOwner()->GetComponent<TextComponent>(); //This will only happen the first time
+        }
+        else
+        {
+            m_Delay += deltaT;
+            ++m_Count;
+            if (m_Delay >= m_MaxTimeBetweenUpdates)
+            {
+                m_LastFPS = m_Count / m_MaxTimeBetweenUpdates;
 
-				std::string printString = std::format("{:.1f} FPS", m_LastFPS);
-				m_pOwnerText->SetText(printString);
+                std::string printString = std::format("{:.1f} FPS", m_LastFPS);
+                m_pOwnerText->SetText(printString);
 
-				m_Count = 0;
-				m_Delay -= m_MaxTimeBetweenUpdates;
-			}
-		}
-	}
+                m_Count = 0;
+                m_Delay -= m_MaxTimeBetweenUpdates;
+            }
+        }
+    }
 
 #pragma endregion
 #pragma region Encircle
-	void Encircle::Update(float deltaT)
-	{	
-		const float twoPi{ static_cast<float>(std::numbers::pi) * 2 };
-		m_Angle += m_RotationsPerSec * deltaT;
+    void Encircle::Update(float deltaT)
+    {
+        const float twoPi{ static_cast<float>(std::numbers::pi) * 2 };
+        m_Angle += m_RotationsPerSec * deltaT;
 
-		if (m_Angle >= twoPi)
-		{
-			m_Angle -= twoPi;
-		}
+        if (m_Angle >= twoPi)
+        {
+            m_Angle -= twoPi;
+        }
 
-		m_Offset.x = m_Distance * glm::cos(m_Angle);
-		m_Offset.y = m_Distance * glm::sin(m_Angle);
+        m_Offset.x = m_Distance * glm::cos(m_Angle);
+        m_Offset.y = m_Distance * glm::sin(m_Angle);
 
-		GetOwner()->SetLocalPosition(glm::vec3(m_Offset.x, m_Offset.y, 0.f));	
-	}
+        GetOwner()->SetLocalPosition(glm::vec3(m_Offset.x, m_Offset.y, 0.f));
+    }
 #pragma endregion
 #pragma region ImGui
-	void ImGuiComponent::RenderUI() const
-	{
+    void ImGuiComponent::RenderUI() const
+    {
         //ImGui_ImplOpenGL3_NewFrame();
         //ImGui_ImplSDL2_NewFrame();
         //ImGui::NewFrame();
-		// Create a simple menu
-		ImGui::Begin("Clear the cache + ImGui exercise");
+        // Create a simple menu
+        ImGui::Begin("Clear the cache + ImGui exercise");
         ImGui::InputInt("# Samples", m_pSamples);
 
-		// Add a button
-		if (ImGui::Button("All exercises"))
-		{
+        // Add a button
+        if (ImGui::Button("All exercises"))
+        {
             //*m_pString = std::string{};
             RunExercises();
-		}
+        }
 
         //ImGui::Text("%s", (*m_pString).c_str());
 
@@ -195,7 +194,7 @@ namespace dae
             //*m_pString = std::string{};
             Exercise1();
         }
-        
+
         if (m_pExercise1Results && m_pExercise1Results->data())
         {
             // Plot the data exercise 1
@@ -310,14 +309,14 @@ namespace dae
         // Rendering
         //ImGui::Render();
        // ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-	}
+    }
 
-	void ImGuiComponent::RunExercises() const
-	{
-		Exercise1();
-		Exercise2();
-		Exercise2Alt();
-	}
+    void ImGuiComponent::RunExercises() const
+    {
+        Exercise1();
+        Exercise2();
+        Exercise2Alt();
+    }
 
     void ImGuiComponent::Exercise1() const
     {
@@ -449,8 +448,8 @@ namespace dae
 
             auto averageDuration{ durationSum / durations.size() };
 
-           string += "stepsize: " + std::to_string(stepsize) + ", duration: " + std::to_string(averageDuration) + " microseconds\n";
-           m_pExercise2Results->push_back(static_cast<float>(averageDuration));
+            string += "stepsize: " + std::to_string(stepsize) + ", duration: " + std::to_string(averageDuration) + " microseconds\n";
+            m_pExercise2Results->push_back(static_cast<float>(averageDuration));
         }
         string += '\n';
         //*m_pString += string;
@@ -524,4 +523,45 @@ namespace dae
         //*m_pString += string;
     }
 #pragma endregion
+    PlayerComponent::PlayerComponent(dae::GameObject* pOwner, int playerNr, float moveSpeed)
+        :Component(pOwner)
+        , m_PlayerNr{ playerNr }
+        , m_MovementSpeed{ moveSpeed }
+    {
+    }
+
+    void PlayerComponent::Update(float dt)
+    {
+        m_DeltaT = dt;
+    }
+
+    void PlayerComponent::Move(Direction direction)
+    {
+        auto localPos = GetOwner()->GetLocalPosition();
+        const float moveSpeedDeltaTime = m_MovementSpeed * m_DeltaT;
+
+        switch (direction)
+        {
+            // move to the right
+        case Direction::RIGHT:
+            localPos.x += moveSpeedDeltaTime;
+            break;
+            // move to the left
+        case Direction::LEFT:
+            localPos.x -= moveSpeedDeltaTime;
+            break;
+            // move down
+        case Direction::DOWN:
+            localPos.y += moveSpeedDeltaTime;
+            break;
+            // move up
+        case Direction::UP:
+            localPos.y -= moveSpeedDeltaTime;
+            break;
+        default:
+            break;
+        }
+
+        GetOwner()->SetLocalPosition(localPos);
+    }
 }

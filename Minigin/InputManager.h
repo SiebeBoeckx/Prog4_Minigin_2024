@@ -50,6 +50,8 @@ namespace dae
 		void AddCommand(SDL_Scancode keyboardButton, std::unique_ptr<Command> command, int playerIdx, KeyState state = KeyState::Down);
 		void AddCommand(XBox360Controller::Button button, std::unique_ptr<Command> command, int playerIdx, KeyState state = KeyState::Down);
 
+		void RemoveCommand(std::unique_ptr<KeyAction> pCommand);
+
 		XBox360Controller& GetPlayer(int idx);
 
 	private:

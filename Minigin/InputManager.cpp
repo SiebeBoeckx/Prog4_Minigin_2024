@@ -158,17 +158,29 @@ namespace dae
 		//{
 		//	std::cout << "Hello" << '\n';
 		//}
-		return m_pControllers[playerIdx]->IsBeingPressed(button);
+		if (button != XBox360Controller::Button::Default)
+		{
+			return m_pControllers[playerIdx]->IsBeingPressed(button);
+		}
+		return false;
 	}
 
 	bool InputManager::IsDownThisFrame(XBox360Controller::Button button, int playerIdx) const
 	{
-		return m_pControllers[playerIdx]->IsDown(button);
+		if (button != XBox360Controller::Button::Default)
+		{
+			return m_pControllers[playerIdx]->IsDown(button);
+		}
+		return false;
 	}
 
 	bool InputManager::IsUpThisFrame(XBox360Controller::Button button, int playerIdx) const
 	{
-		return m_pControllers[playerIdx]->IsUp(button);
+		if (button != XBox360Controller::Button::Default)
+		{
+			return m_pControllers[playerIdx]->IsUp(button);
+		}
+		return false;
 	}
 
 	void InputManager::AddCommand(XBox360Controller::Button controllerButton, SDL_Scancode keyboardButton, std::unique_ptr<Command> command, int playerIdx, KeyState state)
@@ -178,13 +190,13 @@ namespace dae
 			std::cout << "Player not found, cannot add command\n\n";
 			return;
 		}
-		KeyAction* action = new KeyAction();
+		std::unique_ptr<KeyAction> action = std::make_unique<KeyAction>();
 		action->command = std::move(command);
 		action->controllerButton = controllerButton;
 		action->state = state;
 		action->playerIdx = playerIdx;
 		action->key = keyboardButton;
-		m_pKeyCommands.emplace_back(action);
+		m_pKeyCommands.emplace_back(std::move(action));
 	}
 
 	void InputManager::AddCommand(SDL_Scancode keyboardButton, std::unique_ptr<Command> command, int playerIdx, KeyState state)
@@ -195,5 +207,17 @@ namespace dae
 	void InputManager::AddCommand(XBox360Controller::Button button, std::unique_ptr<Command> command, int playerIdx, KeyState state)
 	{
 		AddCommand(button, SDL_SCANCODE_UNKNOWN, std::move(command), playerIdx, state);
+	}
+
+	void InputManager::RemoveCommand(std::unique_ptr<KeyAction> pCommand)
+	{
+		for (auto it{ m_pKeyCommands.begin() }; it != m_pKeyCommands.end(); ++it)
+		{
+			if (it->get() == pCommand.get())
+			{
+				m_pKeyCommands.erase(it);
+				break;
+			}
+		}
 	}
 }

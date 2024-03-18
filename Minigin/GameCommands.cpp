@@ -1,4 +1,5 @@
 #include "GameCommands.h"
+#include "GameObject.h"
 
 using namespace dae;
 

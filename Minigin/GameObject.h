@@ -2,11 +2,10 @@
 #include <memory>
 #include <vector>
 #include "Transform.h"
+#include "Components.h"
 
 namespace dae
 {
-	class Component;
-
 	class GameObject final
 	{
 	public:
@@ -42,7 +41,7 @@ namespace dae
 		template <typename T, typename... Args>
 		T& AddComponent(Args&&... args)
 		{
-			m_pComponents.emplace_back(std::make_shared<T>(this, std::forward<Args>(args)...));
+			m_pComponents.emplace_back(std::make_unique<T>(this, std::forward<Args>(args)...));
 			return *static_cast<T*>(m_pComponents.back().get());
 		}
 
@@ -92,7 +91,7 @@ namespace dae
 		const std::vector<GameObject*>& GetChildren() const { return m_pChildren; };
 
 	private:
-		std::vector<std::shared_ptr<Component>> m_pComponents{};
+		std::vector<std::unique_ptr<Component>> m_pComponents{};
 
 		Transform m_localTransform{};
 		Transform m_globalTransform{};

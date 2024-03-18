@@ -1,14 +1,18 @@
 #pragma once
+#include <memory>
+#include <vector>
 #include <glm/glm.hpp>
 #include <SDL_ttf.h>
 #include <string>
-#include "GameObject.h"
+//#include "GameObject.h"
 #include "Enums.h"
+#include "Texture2D.h"
+#include "Font.h"
 
 namespace dae
 {
-	class Texture2D;
-	class Font;
+	class GameObject;
+	class Transform;
 
 	class Component
 	{
@@ -51,18 +55,18 @@ namespace dae
 		void Update(float) override;
 		void Render() const override;
 		void SetTexture(const std::string& filename);
-		void SetTexture(const std::shared_ptr<Texture2D>& texture);
-		std::shared_ptr<Texture2D> GetTexturePtr() const { return m_texture; };
+		void SetTexture(std::unique_ptr<Texture2D> texture);
+		const Texture2D* GetTexturePtr() const { return m_texture.get(); };
 	private:
-		std::shared_ptr<Texture2D> m_texture{ nullptr };
+		std::unique_ptr<Texture2D> m_texture{ nullptr };
 		const Transform* m_pOwnerGlobalTransform{ nullptr };
 	};
 
 	class TextComponent final : public Component
 	{
 	public:
-		TextComponent(GameObject* pOwner, const std::string& text, std::shared_ptr<Font> font);
-		TextComponent(GameObject* pOwner, const std::string& text, std::shared_ptr<Font> font, const SDL_Color& color);
+		TextComponent(GameObject* pOwner, const std::string& text, std::unique_ptr<Font> font);
+		TextComponent(GameObject* pOwner, const std::string& text, std::unique_ptr<Font> font, const SDL_Color& color);
 
 		void Update(float) override;
 
@@ -72,7 +76,7 @@ namespace dae
 	private:
 		bool m_needsUpdate; //Only update at initialize or if text changes
 		std::string m_text;
-		std::shared_ptr<Font> m_font{ nullptr };
+		std::unique_ptr<Font> m_font{ nullptr };
 		SDL_Color m_Color{ 255,255,255 };
 		TextureComponent* m_pOwnerTexture{ nullptr };
 	};

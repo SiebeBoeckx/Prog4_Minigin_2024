@@ -1,4 +1,7 @@
 #pragma once
+#ifndef COMMAND_H
+#define COMMAND_H
+
 namespace dae
 {
 	class Command
@@ -15,3 +18,5 @@ namespace dae
 		virtual void Undo() = 0;
 	};
 }
+
+#endif // !COMMAND

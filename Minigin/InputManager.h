@@ -32,7 +32,7 @@ namespace dae
 			XBox360Controller::Button controllerButton{};
 			SDL_Scancode key{};
 		};
-		~InputManager();
+		virtual ~InputManager() = default;
 		bool ProcessInput();
 		void UpdateControllers();
 		bool UpdateMouse();
@@ -54,7 +54,7 @@ namespace dae
 
 	private:
 		std::vector<std::unique_ptr<XBox360Controller>> m_pControllers{};
-		std::vector<KeyAction*> m_KeyCommands{};
+		std::vector<std::unique_ptr<KeyAction>> m_pKeyCommands{};
 
 		glm::ivec2 m_MousePos{};
 		bool m_isMousePressed{ false };

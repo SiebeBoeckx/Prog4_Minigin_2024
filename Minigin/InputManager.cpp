@@ -6,15 +6,6 @@
 
 namespace dae
 {
-	InputManager::~InputManager()
-	{
-		for (auto element : m_KeyCommands)
-		{
-			delete element;
-			element = nullptr;
-		}
-	}
-
 	bool InputManager::ProcessInput()
 	{
 		const bool returnBool = UpdateMouse(); //Returns false to quit
@@ -92,7 +83,7 @@ namespace dae
 	{
 		const Uint8* keyboardState = SDL_GetKeyboardState(NULL);
 
-		for (const auto& keyAction : m_KeyCommands)
+		for (const auto& keyAction : m_pKeyCommands)
 		{
 			bool keyPressed = keyboardState[keyAction->key];
 			bool keyPreviouslyPressed = m_PreviousKeyboardState[keyAction->key];
@@ -193,7 +184,7 @@ namespace dae
 		action->state = state;
 		action->playerIdx = playerIdx;
 		action->key = keyboardButton;
-		m_KeyCommands.emplace_back(action);
+		m_pKeyCommands.emplace_back(action);
 	}
 
 	void InputManager::AddCommand(SDL_Scancode keyboardButton, std::unique_ptr<Command> command, int playerIdx, KeyState state)

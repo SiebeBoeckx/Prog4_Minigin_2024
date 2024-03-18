@@ -2,8 +2,8 @@
 #include "Components.h"
 #include "ResourceManager.h"
 #include "Renderer.h"
-#include "Texture2D.h"
-#include "Font.h"
+//#include "Texture2D.h"
+//#include "Font.h"
 #include <format>
 #include <numbers>
 #include <chrono>
@@ -13,6 +13,8 @@
 #include "backends/imgui_impl_opengl3.h"
 #include "backends/imgui_impl_sdl2.h"
 #include "imgui_plot.h"
+
+#include "GameObject.h"
 
 namespace dae
 {
@@ -50,14 +52,14 @@ namespace dae
         m_texture = ResourceManager::GetInstance().LoadTexture(filename);
     }
 
-    void TextureComponent::SetTexture(const std::shared_ptr<Texture2D>& texture)
+    void TextureComponent::SetTexture(std::unique_ptr<Texture2D> texture)
     {
-        m_texture = texture;
+        m_texture = std::move(texture);
     }
 #pragma endregion
 #pragma region Text
 
-    TextComponent::TextComponent(GameObject* pOwner, const std::string& text, std::shared_ptr<Font> font)
+    TextComponent::TextComponent(GameObject* pOwner, const std::string& text, std::unique_ptr<Font> font)
         :Component(pOwner)
         , m_needsUpdate(true)
         , m_text(text)
@@ -65,7 +67,7 @@ namespace dae
     {
     }
 
-    TextComponent::TextComponent(GameObject* pOwner, const std::string& text, std::shared_ptr<Font> font, const SDL_Color& color)
+    TextComponent::TextComponent(GameObject* pOwner, const std::string& text, std::unique_ptr<Font> font, const SDL_Color& color)
         :Component(pOwner)
         , m_needsUpdate(true)
         , m_text(text)
@@ -95,7 +97,7 @@ namespace dae
                     throw std::runtime_error(std::string("Create text texture from surface failed: ") + SDL_GetError());
                 }
                 SDL_FreeSurface(surf);
-                m_pOwnerTexture->SetTexture(std::make_shared<Texture2D>(texture));
+                m_pOwnerTexture->SetTexture(std::make_unique<Texture2D>(texture));
                 m_needsUpdate = false;
             }
         }

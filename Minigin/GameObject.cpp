@@ -2,7 +2,6 @@
 #include "GameObject.h"
 #include "ResourceManager.h"
 #include "Renderer.h"
-#include "Components.h"
 
 namespace dae
 {

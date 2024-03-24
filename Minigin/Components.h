@@ -5,7 +5,6 @@
 #include <SDL_ttf.h>
 #include <string>
 //#include "GameObject.h"
-#include "Enums.h"
 #include "Texture2D.h"
 #include "Font.h"
 
@@ -182,14 +181,10 @@ namespace dae
 	class PlayerComponent final : public Component
 	{
 	public:
-		PlayerComponent(dae::GameObject* pOwner, int playerNr, float moveSpeed);
+		PlayerComponent(dae::GameObject* pOwner, int playerNr);
 
 		void Update(float dt) override;
-		void Move(Direction direction);
 	private:
 		const int m_PlayerNr;
-		float m_MovementSpeed;
-
-		float m_DeltaT{};
 	};
 }

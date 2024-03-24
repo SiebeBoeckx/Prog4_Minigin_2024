@@ -41,6 +41,11 @@ namespace dae
 		}
 	}
 
+	void GameObject::Translate(glm::vec2 vector)
+	{
+		SetLocalPosition(m_localTransform.GetPosition() + glm::vec3{ vector.x, vector.y, 0 });
+	}
+
 	void GameObject::DeletionUpdate()
 	{
 		//Delete marked components

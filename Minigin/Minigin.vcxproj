@@ -189,7 +189,6 @@
     <ClInclude Include="Command.h" />
     <ClInclude Include="Components.h" />
     <ClInclude Include="Controllers.h" />
-    <ClInclude Include="Enums.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="GameCommands.h" />
     <ClInclude Include="GameObject.h" />

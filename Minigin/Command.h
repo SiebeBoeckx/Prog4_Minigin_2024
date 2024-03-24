@@ -9,7 +9,7 @@ namespace dae
 	public:
 		virtual ~Command() = default;
 
-		virtual void Execute() = 0;
+		virtual void Execute(float deltaT) = 0;
 	};
 
 	class EditorCommand : public Command

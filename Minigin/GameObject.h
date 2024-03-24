@@ -90,6 +90,8 @@ namespace dae
 		void SetParent(GameObject* pParent, bool keepWorldPosition = false);
 		const std::vector<GameObject*>& GetChildren() const { return m_pChildren; };
 
+		void Translate(glm::vec2 vector);
+
 	private:
 		std::vector<std::unique_ptr<Component>> m_pComponents{};
 

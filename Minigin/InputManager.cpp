@@ -6,11 +6,11 @@
 
 namespace dae
 {
-	bool InputManager::ProcessInput()
+	bool InputManager::ProcessInput(float deltaT)
 	{
 		const bool returnBool = UpdateMouse(); //Returns false to quit
 		UpdateControllers();
-		ExecuteActions();
+		ExecuteActions(deltaT);
 		return returnBool;
 	}
 
@@ -79,7 +79,7 @@ namespace dae
 		return true;
 	}
 
-	void InputManager::ExecuteActions()
+	void InputManager::ExecuteActions(float deltaT)
 	{
 		const Uint8* keyboardState = SDL_GetKeyboardState(NULL);
 
@@ -93,31 +93,31 @@ namespace dae
 			case KeyState::Down:
 				if (IsDownThisFrame(keyAction->controllerButton, keyAction->playerIdx))
 				{
-					keyAction->command->Execute();
+					keyAction->command->Execute(deltaT);
 				}
 				else if (keyPressed && !keyPreviouslyPressed)
 				{
-					keyAction->command.get()->Execute();
+					keyAction->command.get()->Execute(deltaT);
 				}
 				break;
 			case KeyState::Pressed:
 				if (IsPressed(keyAction->controllerButton, keyAction->playerIdx))
 				{
-					keyAction->command->Execute();
+					keyAction->command->Execute(deltaT);
 				}
 				else if (keyPressed)
 				{
-					keyAction->command.get()->Execute();
+					keyAction->command.get()->Execute(deltaT);
 				}
 				break;
 			case KeyState::Up:
 				if (IsUpThisFrame(keyAction->controllerButton, keyAction->playerIdx))
 				{
-					keyAction->command->Execute();
+					keyAction->command->Execute(deltaT);
 				}
 				else if (!keyPressed && keyPreviouslyPressed)
 				{
-					keyAction->command.get()->Execute();
+					keyAction->command.get()->Execute(deltaT);
 				}
 				break;
 			default:

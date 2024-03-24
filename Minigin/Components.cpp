@@ -525,45 +525,14 @@ namespace dae
         //*m_pString += string;
     }
 #pragma endregion
-    PlayerComponent::PlayerComponent(dae::GameObject* pOwner, int playerNr, float moveSpeed)
+    PlayerComponent::PlayerComponent(dae::GameObject* pOwner, int playerNr)
         :Component(pOwner)
         , m_PlayerNr{ playerNr }
-        , m_MovementSpeed{ moveSpeed }
     {
     }
 
-    void PlayerComponent::Update(float dt)
+    void PlayerComponent::Update(float)
     {
-        m_DeltaT = dt;
-    }
-
-    void PlayerComponent::Move(Direction direction)
-    {
-        auto localPos = GetOwner()->GetLocalPosition();
-        const float moveSpeedDeltaTime = m_MovementSpeed * m_DeltaT;
-
-        switch (direction)
-        {
-            // move to the right
-        case Direction::RIGHT:
-            localPos.x += moveSpeedDeltaTime;
-            break;
-            // move to the left
-        case Direction::LEFT:
-            localPos.x -= moveSpeedDeltaTime;
-            break;
-            // move down
-        case Direction::DOWN:
-            localPos.y += moveSpeedDeltaTime;
-            break;
-            // move up
-        case Direction::UP:
-            localPos.y -= moveSpeedDeltaTime;
-            break;
-        default:
-            break;
-        }
-
-        GetOwner()->SetLocalPosition(localPos);
+        
     }
 }

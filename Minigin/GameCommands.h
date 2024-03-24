@@ -5,9 +5,10 @@
 class MoveCommand : public dae::Command
 {
 public:
-	MoveCommand(dae::GameObject* pOwner, Direction dir) : Command(), m_Dir{ dir }, m_pOwner(pOwner) {};
-	virtual void Execute() override;
+	MoveCommand(dae::GameObject* pOwner, glm::vec2 dir, float moveSpeed = 10.f) : Command(), m_Dir{ dir }, m_pOwner{ pOwner }, m_MoveSpeed{ moveSpeed } {};
+	virtual void Execute(float deltaT) override;
 private:
-	Direction m_Dir{};
 	dae::GameObject* m_pOwner{};
+	glm::vec2 m_Dir{};
+	const float m_MoveSpeed{ 10.f };
 };

@@ -33,10 +33,10 @@ namespace dae
 			SDL_Scancode key{};
 		};
 		virtual ~InputManager() = default;
-		bool ProcessInput();
+		bool ProcessInput(float deltaT);
 		void UpdateControllers();
 		bool UpdateMouse();
-		void ExecuteActions();
+		void ExecuteActions(float deltaT);
 
 		int AddPlayer();
 

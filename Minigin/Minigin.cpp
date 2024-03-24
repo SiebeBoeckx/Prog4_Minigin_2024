@@ -102,7 +102,7 @@ void dae::Minigin::Run(const std::function<void()>& load)
 
 		lag += deltaTime;
 
-		doContinue = input.ProcessInput();
+		doContinue = input.ProcessInput(deltaTime);
 
 		while (lag >= m_FixedTimeStep)
 		{

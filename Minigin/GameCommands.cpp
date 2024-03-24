@@ -3,14 +3,12 @@
 
 using namespace dae;
 
-void MoveCommand::Execute()
+void MoveCommand::Execute(float deltaT)
 {
-	PlayerComponent* myPlayer = m_pOwner->GetComponent<PlayerComponent>();
-
-	if (!myPlayer)
+	if (!m_pOwner)
 	{
 		return;
 	}
 
-	myPlayer->Move(m_Dir);
+	m_pOwner->Translate(m_Dir * m_MoveSpeed * deltaT);
 }

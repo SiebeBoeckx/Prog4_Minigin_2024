@@ -8,7 +8,6 @@
 #include "Texture2D.h"
 #include "Font.h"
 #include "Subject.h"
-#include "Event.h"
 
 namespace dae
 {
@@ -180,19 +179,36 @@ namespace dae
 		int* m_pSamples{ new int{ 100 } };
 	};
 
-	template<typename... Args>
 	class PlayerComponent final : public Component
 	{
 	public:
 		PlayerComponent(dae::GameObject* pOwner, int playerNr, int lives = 3);
 
-		void AddObserver(Observer<Event<Args...>>* obs);
-		void RemoveObserver(Observer<Event<Args...>>* obs);
+		void AddObserver(Observer* obs);
+		void RemoveObserver(Observer* obs);
+		int GetLives() const { return m_Lives; }
+		int GetPoints() const { return m_Points; }
+
+		void AddPoints(int amount)
+		{
+			m_Points += amount;
+			m_pPlayerSubject->Notify(EventType::ADD_POINTS);
+		}
+
+		void LoseLife()
+		{
+			--m_Lives;
+			m_pPlayerSubject->Notify(EventType::PLAYER_DIED);
+			if (m_Lives <= 0)
+			{
+				m_pPlayerSubject->Notify(EventType::GAME_OVER);
+			}
+		}
 	private:
 		const int m_PlayerNr;
 		int m_Lives;
 		int m_Points;
 
-		std::unique_ptr<Subject<Args...>> m_pPlayerSubject{};
+		std::unique_ptr<Subject> m_pPlayerSubject{};
 	};
 }

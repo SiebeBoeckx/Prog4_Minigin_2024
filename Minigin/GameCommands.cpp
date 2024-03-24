@@ -12,3 +12,13 @@ void MoveCommand::Execute(float deltaT)
 
 	m_pOwner->Translate(m_Dir * m_MoveSpeed * deltaT);
 }
+
+void AddPointsCommand::Execute(float)
+{
+	m_pOwner->GetComponent<PlayerComponent>()->AddPoints(m_Points);
+}
+
+void LoseLifeCommand::Execute(float)
+{
+	m_pOwner->GetComponent<PlayerComponent>()->LoseLife();
+}

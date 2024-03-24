@@ -525,14 +525,22 @@ namespace dae
         //*m_pString += string;
     }
 #pragma endregion
-    PlayerComponent::PlayerComponent(dae::GameObject* pOwner, int playerNr)
+    template<typename... Args>
+    PlayerComponent<Args...>::PlayerComponent(dae::GameObject* pOwner, int playerNr, int lives)
         :Component(pOwner)
-        , m_PlayerNr{ playerNr }
+        ,m_PlayerNr{ playerNr }
+        ,m_Lives{lives}
+        ,m_Points{0}
     {
     }
-
-    void PlayerComponent::Update(float)
+    template<typename ...Args>
+    void PlayerComponent<Args...>::AddObserver(Observer<Event<Args...>>* obs)
     {
-        
+        m_pPlayerSubject->AddObserver(obs);
+    }
+    template<typename ...Args>
+    void PlayerComponent<Args...>::RemoveObserver(Observer<Event<Args...>>* obs)
+    {
+        m_pPlayerSubject->RemoveObserver(obs);
     }
 }

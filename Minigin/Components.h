@@ -7,6 +7,8 @@
 //#include "GameObject.h"
 #include "Texture2D.h"
 #include "Font.h"
+#include "Subject.h"
+#include "Event.h"
 
 namespace dae
 {
@@ -178,13 +180,19 @@ namespace dae
 		int* m_pSamples{ new int{ 100 } };
 	};
 
+	template<typename... Args>
 	class PlayerComponent final : public Component
 	{
 	public:
-		PlayerComponent(dae::GameObject* pOwner, int playerNr);
+		PlayerComponent(dae::GameObject* pOwner, int playerNr, int lives = 3);
 
-		void Update(float dt) override;
+		void AddObserver(Observer<Event<Args...>>* obs);
+		void RemoveObserver(Observer<Event<Args...>>* obs);
 	private:
 		const int m_PlayerNr;
+		int m_Lives;
+		int m_Points;
+
+		std::unique_ptr<Subject<Args...>> m_pPlayerSubject{};
 	};
 }

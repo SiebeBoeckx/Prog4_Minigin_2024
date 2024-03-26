@@ -3,16 +3,16 @@
 namespace dae
 {
 	//template<typename... Args>
-	class Observer
+	class IObserver
 	{
 	public:
-		Observer() = default;
-		virtual ~Observer() = default;
+		IObserver() = default;
+		virtual ~IObserver() = default;
 		virtual void HandleEvent(EventType event) = 0;
 		//virtual void OnSubjectDestroy() = 0;
-		Observer(const Observer& other) = delete;
-		Observer(Observer&& other) = delete;
-		Observer& operator=(const Observer& other) = delete;
-		Observer& operator=(Observer&& other) = delete;
+		IObserver(const IObserver& other) = delete;
+		IObserver(IObserver&& other) = delete;
+		IObserver& operator=(const IObserver& other) = delete;
+		IObserver& operator=(IObserver&& other) = delete;
 	};
 }

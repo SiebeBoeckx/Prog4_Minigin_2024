@@ -8,7 +8,7 @@ namespace dae
 {
 	//template<typename... Args>
 	class Subject final {
-		std::vector<Observer*> m_observers{};
+		std::vector<IObserver*> m_observers{};
 	public:
 		~Subject() = default;
 		//{
@@ -17,11 +17,11 @@ namespace dae
 		//		observer->OnSubjectDestroy();
 		//	}
 		//}
-		void AddObserver(Observer* observer)
+		void AddObserver(IObserver* observer)
 		{
 			m_observers.push_back(observer);
 		}
-		void RemoveObserver(Observer* observer)
+		void RemoveObserver(IObserver* observer)
 		{
 			m_observers.erase(std::remove(
 				m_observers.begin(),

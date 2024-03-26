@@ -534,12 +534,12 @@ namespace dae
         m_pPlayerSubject = std::make_unique<Subject>();
     }
 
-    void PlayerComponent::AddObserver(Observer* obs)
+    void PlayerComponent::AddObserver(IObserver* obs)
     {
         m_pPlayerSubject->AddObserver(obs);
     }
 
-    void PlayerComponent::RemoveObserver(Observer* obs)
+    void PlayerComponent::RemoveObserver(IObserver* obs)
     {
         m_pPlayerSubject->RemoveObserver(obs);
     }

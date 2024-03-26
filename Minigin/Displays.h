@@ -2,7 +2,7 @@
 #include "Components.h"
 #include "Observer.h"
 
-class LivesDisplayComponent final : public dae::Component, public dae::Observer
+class LivesDisplayComponent final : public dae::Component, public dae::IObserver
 {
 public:
 	LivesDisplayComponent(dae::GameObject* pOwner, dae::PlayerComponent* player);
@@ -22,7 +22,7 @@ private:
 	dae::PlayerComponent* m_pPlayer{};
 };
 
-class ScoreDisplayComponent final : public dae::Component, public dae::Observer
+class ScoreDisplayComponent final : public dae::Component, public dae::IObserver
 {
 public:
 	ScoreDisplayComponent(dae::GameObject* pOwner, dae::PlayerComponent* player);

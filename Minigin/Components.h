@@ -184,8 +184,8 @@ namespace dae
 	public:
 		PlayerComponent(dae::GameObject* pOwner, int playerNr, int lives = 3);
 
-		void AddObserver(Observer* obs);
-		void RemoveObserver(Observer* obs);
+		void AddObserver(IObserver* obs);
+		void RemoveObserver(IObserver* obs);
 		int GetLives() const { return m_Lives; }
 		int GetPoints() const { return m_Points; }
 

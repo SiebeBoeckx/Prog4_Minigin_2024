@@ -105,6 +105,9 @@
     <ClInclude Include="Displays.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GameSystems.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ResourceManager.cpp">
@@ -177,6 +180,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Displays.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameSystems.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

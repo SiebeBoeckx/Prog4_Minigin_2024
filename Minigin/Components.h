@@ -187,13 +187,6 @@ namespace dae
 		void AddObserver(IObserver* obs);
 		void RemoveObserver(IObserver* obs);
 		int GetLives() const { return m_Lives; }
-		int GetPoints() const { return m_Points; }
-
-		void AddPoints(int amount)
-		{
-			m_Points += amount;
-			m_pPlayerSubject->Notify(EventType::ADD_POINTS);
-		}
 
 		void LoseLife()
 		{
@@ -207,7 +200,6 @@ namespace dae
 	private:
 		const int m_PlayerNr;
 		int m_Lives;
-		int m_Points;
 
 		std::unique_ptr<Subject> m_pPlayerSubject{};
 	};

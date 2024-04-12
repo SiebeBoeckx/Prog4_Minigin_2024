@@ -194,6 +194,7 @@
     <ClInclude Include="Font.h" />
     <ClInclude Include="GameCommands.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="GameSystems.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="Minigin.h" />
@@ -222,6 +223,7 @@
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="GameCommands.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="GameSystems.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Minigin.cpp" />

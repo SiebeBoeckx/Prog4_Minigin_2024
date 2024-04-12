@@ -37,11 +37,12 @@ void LivesDisplayComponent::HandleEvent(EventType event)
 
 #pragma region ScoreDisplay
 
-ScoreDisplayComponent::ScoreDisplayComponent(dae::GameObject* pOwner, dae::PlayerComponent* player)
+ScoreDisplayComponent::ScoreDisplayComponent(dae::GameObject* pOwner, dae::ScoreSystem* score, int idx)
 	:Component(pOwner)
 	, pTextComponent{ GetOwner()->GetComponent<dae::TextComponent>() }
 	, m_Text{ "SCORE: " }
-	, m_pPlayer(player)
+	, m_pScore{ score }
+	, m_Idx{ idx }
 {
 }
 
@@ -58,15 +59,25 @@ void ScoreDisplayComponent::HandleEvent(EventType event)
 	switch (event)
 	{
 	case EventType::ADD_POINTS:
-		m_Score += 10;
-		m_Text = "SCORE: " + std::to_string(m_Score);
+		UpdateScoreText();
 		pTextComponent->SetText(m_Text);
 		break;
 	case EventType::START_GAME:
-		m_Text = "SCORE: " + std::to_string(m_Score);
+		UpdateScoreText();
 		pTextComponent->SetText(m_Text);
 	default:
 		break;
+	}
+}
+void ScoreDisplayComponent::UpdateScoreText()
+{
+	if (m_Idx == 0)
+	{
+		m_Text = "SCORE: " + std::to_string(m_pScore->GetScore_P1());
+	}
+	else if (m_Idx == 1)
+	{
+		m_Text = "SCORE: " + std::to_string(m_pScore->GetScore_P2());
 	}
 }
 #pragma endregion

@@ -6,7 +6,9 @@ enum EventType {
 	PLAYER_DIED,
 	GAME_WIN,
 	GAME_OVER,
-	START_GAME
+	START_GAME,
+	PICKUP_ITEM_P1,
+	PICKUP_ITEM_P2
 };
 
 //template<typename... EventArg>

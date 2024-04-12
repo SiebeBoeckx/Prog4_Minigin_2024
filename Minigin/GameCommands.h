@@ -1,6 +1,7 @@
 #pragma once
 #include "Command.h"
 #include "Components.h"
+#include "GameSystems.h"
 
 class MoveCommand : public dae::Command
 {
@@ -13,14 +14,22 @@ private:
 	const float m_MoveSpeed{ 10.f };
 };
 
-class AddPointsCommand : public dae::Command
+class PickupItem_Command_P1 : public dae::Command
 {
 public:
-	AddPointsCommand(dae::GameObject* pOwner, int points = 10) : Command(), m_pOwner{ pOwner }, m_Points{ points } {};
+	PickupItem_Command_P1(dae::ScoreSystem* scoreSystem) : Command(), m_pScoreSystem{ scoreSystem } {};
 	virtual void Execute(float) override;
 private:
-	dae::GameObject* m_pOwner{};
-	int m_Points{};
+	dae::ScoreSystem* m_pScoreSystem{};
+};
+
+class PickupItem_Command_P2 : public dae::Command
+{
+public:
+	PickupItem_Command_P2(dae::ScoreSystem* scoreSystem) : Command(), m_pScoreSystem{ scoreSystem } {};
+	virtual void Execute(float) override;
+private:
+	dae::ScoreSystem* m_pScoreSystem{};
 };
 
 class LoseLifeCommand : public dae::Command

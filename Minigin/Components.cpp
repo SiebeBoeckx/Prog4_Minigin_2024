@@ -529,7 +529,6 @@ namespace dae
         :Component(pOwner)
         ,m_PlayerNr{ playerNr }
         ,m_Lives{lives}
-        ,m_Points{0}
     {
         m_pPlayerSubject = std::make_unique<Subject>();
     }

@@ -91,31 +91,19 @@ namespace dae
 			switch (keyAction->state)
 			{
 			case KeyState::Down:
-				if (IsDownThisFrame(keyAction->controllerButton, keyAction->playerIdx))
-				{
-					keyAction->command->Execute(deltaT);
-				}
-				else if (keyPressed && !keyPreviouslyPressed)
+				if (keyPressed && !keyPreviouslyPressed)
 				{
 					keyAction->command.get()->Execute(deltaT);
 				}
 				break;
 			case KeyState::Pressed:
-				if (IsPressed(keyAction->controllerButton, keyAction->playerIdx))
-				{
-					keyAction->command->Execute(deltaT);
-				}
-				else if (keyPressed)
+				if (keyPressed)
 				{
 					keyAction->command.get()->Execute(deltaT);
 				}
 				break;
 			case KeyState::Up:
-				if (IsUpThisFrame(keyAction->controllerButton, keyAction->playerIdx))
-				{
-					keyAction->command->Execute(deltaT);
-				}
-				else if (!keyPressed && keyPreviouslyPressed)
+				if (!keyPressed && keyPreviouslyPressed)
 				{
 					keyAction->command.get()->Execute(deltaT);
 				}
@@ -127,12 +115,39 @@ namespace dae
 
 		// Update previous keyboard states
 		std::memcpy(m_PreviousKeyboardState, keyboardState, SDL_NUM_SCANCODES);
+
+		for (const auto& controllerAction : m_pControllerCommands)
+		{
+			switch (controllerAction->state)
+			{
+			case KeyState::Down:
+				if (IsDownThisFrame(controllerAction->controllerButton, controllerAction->controllerIdx))
+				{
+					controllerAction->command->Execute(deltaT);
+				}
+				break;
+			case KeyState::Pressed:
+				if (IsPressed(controllerAction->controllerButton, controllerAction->controllerIdx))
+				{
+					controllerAction->command->Execute(deltaT);
+				}
+				break;
+			case KeyState::Up:
+				if (IsUpThisFrame(controllerAction->controllerButton, controllerAction->controllerIdx))
+				{
+					controllerAction->command->Execute(deltaT);
+				}
+				break;
+			default:
+				break;
+			}
+		}
 	}
 
 	//returns size of m_pControllers aka the last added player what their number is.
 	//size before push_back is same as index after.
 	//ex, 2 players in vector, size = 2 while the last index is 1. After push back, the new controller would have index 2.
-	int InputManager::AddPlayer()
+	int InputManager::AddController()
 	{
 		int idx = static_cast<int>(m_pControllers.size());
 		m_pControllers.push_back(std::make_unique<XBox360Controller>(idx));
@@ -140,7 +155,7 @@ namespace dae
 	}
 
 	// returns a player, if the idx is out-of-range it takes the last added player
-	XBox360Controller& InputManager::GetPlayer(int idx)
+	XBox360Controller& InputManager::GetController(int idx)
 	{
 		if (idx <= static_cast<int>(m_pControllers.size()))
 		{
@@ -152,70 +167,107 @@ namespace dae
 		}
 	}
 
-	bool InputManager::IsPressed(XBox360Controller::Button button, int  playerIdx) const
+	bool InputManager::IsPressed(XBox360Controller::Button button, int controllerIdx) const
 	{
 		//if (button == XBox360Controller::Button::DPadDown)
 		//{
-		//	std::cout << "Hello" << '\n';
+		//	std::cout << "Hello " << playerIdx << '\n';
 		//}
 		if (button != XBox360Controller::Button::Default)
 		{
-			return m_pControllers[playerIdx]->IsBeingPressed(button);
+			//std::cout << "Hello " << playerIdx << '\n';
+			//if (playerIdx != 0)
+			//{
+			//	return m_pControllers[(m_pControllers.size() - 1) - playerIdx]->IsBeingPressed(button);
+			//}
+			return m_pControllers[controllerIdx]->IsBeingPressed(button);
 		}
+
 		return false;
 	}
 
-	bool InputManager::IsDownThisFrame(XBox360Controller::Button button, int playerIdx) const
+	bool InputManager::IsDownThisFrame(XBox360Controller::Button button, int controllerIdx) const
 	{
 		if (button != XBox360Controller::Button::Default)
 		{
-			return m_pControllers[playerIdx]->IsDown(button);
+			//if (playerIdx != 0)
+			//{
+			//	return m_pControllers[(m_pControllers.size() - 1) - playerIdx]->IsDown(button);
+			//}
+			return m_pControllers[controllerIdx]->IsDown(button);
 		}
 		return false;
 	}
 
-	bool InputManager::IsUpThisFrame(XBox360Controller::Button button, int playerIdx) const
+	bool InputManager::IsUpThisFrame(XBox360Controller::Button button, int controllerIdx) const
 	{
 		if (button != XBox360Controller::Button::Default)
 		{
-			return m_pControllers[playerIdx]->IsUp(button);
+			//if (playerIdx != 0)
+			//{
+			//	return m_pControllers[(m_pControllers.size() - 1) - playerIdx]->IsUp(button);
+			//}
+			return m_pControllers[controllerIdx]->IsUp(button);
 		}
 		return false;
 	}
 
-	void InputManager::AddCommand(XBox360Controller::Button controllerButton, SDL_Scancode keyboardButton, std::unique_ptr<Command> command, int playerIdx, KeyState state)
+	//void InputManager::AddDualCommand(XBox360Controller::Button controllerButton, SDL_Scancode keyboardButton, std::unique_ptr<Command> command, int playerIdx, KeyState state)
+	//{
+	//	AddKeyboardCommand(keyboardButton, std::move(command), playerIdx, state);
+	//	AddControllerCommand(controllerButton, std::move(command), playerIdx, state);
+	//}
+
+	void InputManager::AddKeyboardCommand(SDL_Scancode keyboardButton, std::unique_ptr<Command> command, KeyState state)
 	{
-		if (playerIdx >= static_cast<int>(m_pControllers.size()))
-		{
-			std::cout << "Player not found, cannot add command\n\n";
-			return;
-		}
-		std::unique_ptr<KeyAction> action = std::make_unique<KeyAction>();
+		//No longer needed for keyboard
+		
+		//if (playerIdx >= static_cast<int>(m_pControllers.size()))
+		//{
+		//	std::cout << "Player not found, cannot add command\n\n";
+		//	return;
+		//}
+		std::unique_ptr<KeyboardAction> action = std::make_unique<KeyboardAction>();
 		action->command = std::move(command);
-		action->controllerButton = controllerButton;
 		action->state = state;
-		action->playerIdx = playerIdx;
 		action->key = keyboardButton;
 		m_pKeyCommands.emplace_back(std::move(action));
 	}
 
-	void InputManager::AddCommand(SDL_Scancode keyboardButton, std::unique_ptr<Command> command, int playerIdx, KeyState state)
+	void InputManager::AddControllerCommand(XBox360Controller::Button button, std::unique_ptr<Command> command, int controllerIdx, KeyState state)
 	{
-		AddCommand(XBox360Controller::Button::Default, keyboardButton, std::move(command), playerIdx, state);
+		if (controllerIdx >= static_cast<int>(m_pControllers.size()))
+		{
+			std::cout << "Player not found, cannot add command\n\n";
+			return;
+		}
+		std::unique_ptr<ControllerAction> action = std::make_unique<ControllerAction>();
+		action->command = std::move(command);
+		action->state = state;
+		action->controllerIdx = controllerIdx;
+		action->controllerButton = button;
+		m_pControllerCommands.emplace_back(std::move(action));
 	}
 
-	void InputManager::AddCommand(XBox360Controller::Button button, std::unique_ptr<Command> command, int playerIdx, KeyState state)
-	{
-		AddCommand(button, SDL_SCANCODE_UNKNOWN, std::move(command), playerIdx, state);
-	}
-
-	void InputManager::RemoveCommand(std::unique_ptr<KeyAction> pCommand)
+	void InputManager::RemoveKeyboardCommand(std::unique_ptr<KeyboardAction> pCommand)
 	{
 		for (auto it{ m_pKeyCommands.begin() }; it != m_pKeyCommands.end(); ++it)
 		{
 			if (it->get() == pCommand.get())
 			{
 				m_pKeyCommands.erase(it);
+				break;
+			}
+		}
+	}
+
+	void InputManager::RemoveControllerCommand(std::unique_ptr<ControllerAction> pCommand)
+	{
+		for (auto it{ m_pControllerCommands.begin() }; it != m_pControllerCommands.end(); ++it)
+		{
+			if (it->get() == pCommand.get())
+			{
+				m_pControllerCommands.erase(it);
 				break;
 			}
 		}

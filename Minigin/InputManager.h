@@ -23,14 +23,21 @@ namespace dae
 			Up
 		};
 
-		struct KeyAction
+		struct KeyboardAction
 		{
 			KeyState state{};
 			std::unique_ptr<Command> command{};
-			int playerIdx{};
+
+			SDL_Scancode key{};
+		};
+
+		struct ControllerAction
+		{
+			KeyState state{};
+			std::unique_ptr<Command> command{};
+			int controllerIdx{};
 
 			XBox360Controller::Button controllerButton{};
-			SDL_Scancode key{};
 		};
 		virtual ~InputManager() = default;
 		bool ProcessInput(float deltaT);
@@ -38,25 +45,27 @@ namespace dae
 		bool UpdateMouse();
 		void ExecuteActions(float deltaT);
 
-		int AddPlayer();
+		int AddController();
 
-		bool IsPressed(XBox360Controller::Button button, int playerIdx) const;
-		bool IsDownThisFrame(XBox360Controller::Button button, int playeIdx) const;
-		bool IsUpThisFrame(XBox360Controller::Button button, int playerIdx) const;
+		bool IsPressed(XBox360Controller::Button button, int controllerIdx) const;
+		bool IsDownThisFrame(XBox360Controller::Button button, int controllerIdx) const;
+		bool IsUpThisFrame(XBox360Controller::Button button, int controllerIdx) const;
 		glm::ivec2 GetMousePos()const { return m_MousePos; };
 		bool IsMousePressed() const { return m_isMousePressed; };
 
-		void AddCommand(XBox360Controller::Button button, SDL_Scancode keyboardButton, std::unique_ptr<Command> command, int playerIdx, KeyState state = KeyState::Down);
-		void AddCommand(SDL_Scancode keyboardButton, std::unique_ptr<Command> command, int playerIdx, KeyState state = KeyState::Down);
-		void AddCommand(XBox360Controller::Button button, std::unique_ptr<Command> command, int playerIdx, KeyState state = KeyState::Down);
+		//void AddDualCommand(XBox360Controller::Button button, SDL_Scancode keyboardButton, std::unique_ptr<Command> command, int playerIdx, KeyState state = KeyState::Down);
+		void AddKeyboardCommand(SDL_Scancode keyboardButton, std::unique_ptr<Command> command, KeyState state = KeyState::Down);
+		void AddControllerCommand(XBox360Controller::Button button, std::unique_ptr<Command> command, int controllerIdx, KeyState state = KeyState::Down);
 
-		void RemoveCommand(std::unique_ptr<KeyAction> pCommand);
+		void RemoveKeyboardCommand(std::unique_ptr<KeyboardAction> pCommand);
+		void RemoveControllerCommand(std::unique_ptr<ControllerAction> pCommand);
 
-		XBox360Controller& GetPlayer(int idx);
+		XBox360Controller& GetController(int idx);
 
 	private:
 		std::vector<std::unique_ptr<XBox360Controller>> m_pControllers{};
-		std::vector<std::unique_ptr<KeyAction>> m_pKeyCommands{};
+		std::vector<std::unique_ptr<KeyboardAction>> m_pKeyCommands{};
+		std::vector<std::unique_ptr<ControllerAction>> m_pControllerCommands{};
 
 		glm::ivec2 m_MousePos{};
 		bool m_isMousePressed{ false };

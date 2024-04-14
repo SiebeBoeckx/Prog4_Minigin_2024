@@ -26,6 +26,7 @@ namespace dae
 
 		const Transform* GetLocalTransform() const { return &m_localTransform; };
 		const Transform* GetGlobalTransform() const { return &m_globalTransform; };
+		const Transform* GetPrevGlobalTransform() const { return &m_prevGlobalTransform; };
 
 		void MarkComponentForDelete(Component& component);
 
@@ -97,9 +98,12 @@ namespace dae
 
 		Transform m_localTransform{};
 		Transform m_globalTransform{};
+		Transform m_prevGlobalTransform{};
 		bool m_positionIsDirty{ true };
 		GameObject* m_pParent{ nullptr };
 		std::vector<GameObject*> m_pChildren{};
+
+		bool m_IsPrevPosInitialized{ false };
 
 		void DeletionUpdate();
 		void AddChild(GameObject* child);

@@ -15,6 +15,7 @@
 #include "imgui_plot.h"
 
 #include "GameObject.h"
+#include "CollisionManager.h"
 
 namespace dae
 {
@@ -525,6 +526,7 @@ namespace dae
         //*m_pString += string;
     }
 #pragma endregion
+#pragma region PlayerComponent
     PlayerComponent::PlayerComponent(dae::GameObject* pOwner, int playerNr, int lives)
         :Component(pOwner)
         ,m_PlayerNr{ playerNr }
@@ -542,4 +544,76 @@ namespace dae
     {
         m_pPlayerSubject->RemoveObserver(obs);
     }
+#pragma endregion
+#pragma region ColliderComponent
+
+    ColliderComponent::ColliderComponent(GameObject* go, std::string tag)
+        : Component(go), m_Tag{ tag }
+    {
+        CollisionManager::GetInstance().AddCollider(this);
+        //std::cout << "Added collider to manager!\n";
+        if (m_pOwnerGlobalTransform == nullptr) //Check if the transform pointer is set
+        {
+            m_pOwnerGlobalTransform = GetOwner()->GetGlobalTransform(); //This will only happen the first time
+            m_pOwnerPrevGlobalTransform = GetOwner()->GetPrevGlobalTransform(); //This will only happen the first time
+        }
+    }
+
+    bool ColliderComponent::IsColliding(ColliderComponent* otherCollider) const
+    {
+        // if has the same tag, do not compare! ignore collision
+        std::string otherTag = otherCollider->GetTag();
+        if (otherTag.empty())
+        {
+            return false;
+        }
+
+        if (m_Tag == otherTag)
+        {
+            return false;
+        }
+
+        float xMax = m_ColliderBox.xMin + m_ColliderBox.width;
+        float yMax = m_ColliderBox.yMin + m_ColliderBox.height;
+
+        Collider otherBox = otherCollider->m_ColliderBox;
+
+        if (xMax < otherBox.xMin || (otherBox.xMin + otherBox.width) < m_ColliderBox.xMin)
+        {
+            return false;
+        }
+
+        if ((m_ColliderBox.yMin > otherBox.yMin + otherBox.height) || otherBox.yMin > yMax)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    void ColliderComponent::Update(float)
+    {
+        const auto myPosition = m_pOwnerGlobalTransform->GetPosition();
+
+        if (myPosition != m_pOwnerPrevGlobalTransform->GetPosition())
+        {
+            m_ColliderBox.xMin = myPosition.x;
+            m_ColliderBox.yMin = myPosition.y;           
+        }
+    }
+
+    void ColliderComponent::SetDimensions(float width, float height)
+    {
+        // Sets the dimensions of the bounding box
+        m_ColliderBox.width = width;
+        m_ColliderBox.height = height;
+    }
+
+    void ColliderComponent::SetPosition(float xPos, float yPos)
+    {
+        m_ColliderBox.xMin = xPos;
+        m_ColliderBox.yMin = yPos;
+    }
+
+#pragma endregion
 }

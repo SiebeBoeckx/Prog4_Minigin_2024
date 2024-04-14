@@ -164,18 +164,24 @@ namespace dae
 
 	void GameObject::UpdateWorldPosition()
 	{
-		if (m_positionIsDirty)
+		m_prevGlobalTransform = m_globalTransform;
+
+		if (m_pParent == nullptr)
 		{
-			if (m_pParent == nullptr)
-			{
-				m_globalTransform.SetPosition(m_localTransform.GetPosition());
-			}
-			else
-			{
-				m_globalTransform.SetPosition(m_pParent->GetWorldPosition() + m_localTransform.GetPosition());
-			}
+			m_globalTransform.SetPosition(m_localTransform.GetPosition());
 		}
+		else
+		{
+			m_globalTransform.SetPosition(m_pParent->GetWorldPosition() + m_localTransform.GetPosition());
+		}
+		
 		m_positionIsDirty = false;
+
+		if (!m_IsPrevPosInitialized)
+		{
+			m_prevGlobalTransform = m_globalTransform;
+			m_IsPrevPosInitialized = true;
+		}
 	}
 
 	//void GameObject::SetPosition(float x, float y)

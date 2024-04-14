@@ -203,4 +203,29 @@ namespace dae
 
 		std::unique_ptr<Subject> m_pPlayerSubject{};
 	};
+
+	class ColliderComponent : public Component
+	{
+	public:
+		struct Collider
+		{
+			float xMin, yMin, width, height;
+		};
+
+		ColliderComponent(GameObject* go, std::string tag);
+
+		bool IsColliding(ColliderComponent* otherCollider) const;
+		void Update(float) override;
+		void SetDimensions(float width, float height);
+		void SetPosition(float xPos, float yPos);
+		Collider GetColliderBox() { return m_ColliderBox; }
+		const glm::vec3 GetPosition() const { return { m_ColliderBox.xMin, m_ColliderBox.yMin, 0 }; }
+		std::string GetTag() { return m_Tag; };
+
+	private:
+		Collider m_ColliderBox{};
+		std::string m_Tag{ "ALL" };
+		const Transform* m_pOwnerGlobalTransform{ nullptr };
+		const Transform* m_pOwnerPrevGlobalTransform{ nullptr };
+	};
 }

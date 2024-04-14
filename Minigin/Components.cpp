@@ -555,7 +555,6 @@ namespace dae
         if (m_pOwnerGlobalTransform == nullptr) //Check if the transform pointer is set
         {
             m_pOwnerGlobalTransform = GetOwner()->GetGlobalTransform(); //This will only happen the first time
-            m_pOwnerPrevGlobalTransform = GetOwner()->GetPrevGlobalTransform(); //This will only happen the first time
         }
     }
 
@@ -595,11 +594,8 @@ namespace dae
     {
         const auto myPosition = m_pOwnerGlobalTransform->GetPosition();
 
-        if (myPosition != m_pOwnerPrevGlobalTransform->GetPosition())
-        {
-            m_ColliderBox.xMin = myPosition.x;
-            m_ColliderBox.yMin = myPosition.y;           
-        }
+        m_ColliderBox.xMin = myPosition.x;
+        m_ColliderBox.yMin = myPosition.y;           
     }
 
     void ColliderComponent::SetDimensions(float width, float height)

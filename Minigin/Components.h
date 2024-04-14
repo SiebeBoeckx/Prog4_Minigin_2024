@@ -226,6 +226,5 @@ namespace dae
 		Collider m_ColliderBox{};
 		std::string m_Tag{ "ALL" };
 		const Transform* m_pOwnerGlobalTransform{ nullptr };
-		const Transform* m_pOwnerPrevGlobalTransform{ nullptr };
 	};
 }

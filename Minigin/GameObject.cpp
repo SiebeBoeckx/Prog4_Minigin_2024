@@ -164,8 +164,6 @@ namespace dae
 
 	void GameObject::UpdateWorldPosition()
 	{
-		m_prevGlobalTransform = m_globalTransform;
-
 		if (m_pParent == nullptr)
 		{
 			m_globalTransform.SetPosition(m_localTransform.GetPosition());
@@ -176,12 +174,6 @@ namespace dae
 		}
 		
 		m_positionIsDirty = false;
-
-		if (!m_IsPrevPosInitialized)
-		{
-			m_prevGlobalTransform = m_globalTransform;
-			m_IsPrevPosInitialized = true;
-		}
 	}
 
 	//void GameObject::SetPosition(float x, float y)

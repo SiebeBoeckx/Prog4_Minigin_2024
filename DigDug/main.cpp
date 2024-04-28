@@ -12,6 +12,7 @@
 #include "Displays.h"
 //#include "Event.h"
 //#include "GameComponents.h"
+#include "ServiceLocator.h"
 
 void load();
 int main(int, char* []) {
@@ -25,27 +26,11 @@ int main(int, char* []) {
 
 void load()
 {
+	dae::ServiceLocator::RegisterSoundSystem(std::make_unique<dae::SDLSoundSystem>());
+
 	auto& scene = dae::SceneManager::GetInstance().CreateScene("Demo");
 	std::unique_ptr<dae::Subject<game::EventType>> sceneStartSubject = std::make_unique<dae::Subject<game::EventType>>();
 
-	//auto go = std::make_unique<GameObject>();
-	//TextureComponent* backgroundRender = &go->AddComponent<TextureComponent>();
-	//backgroundRender->SetTexture("background.tga");
-	//go->SetLocalPosition(320, 240);
-	//scene.Add(std::move(go));
-
-	//go = std::make_unique<GameObject>();
-	//TextureComponent* logoRender = &go->AddComponent<TextureComponent>();
-	//logoRender->SetTexture("logo.tga");
-	//go->SetLocalPosition(320, 170);
-	//scene.Add(std::move(go));
-
-	//auto font = dae::ResourceManager::GetInstance().LoadFont("upheavtt.ttf", 36);
-	//auto to = std::make_unique<GameObject>();
-	//to->AddComponent<TextureComponent>();
-	//to->AddComponent<TextComponent>("Programming 4 Assignment", std::move(font));
-	//to->SetLocalPosition(320, 30);
-	//scene.Add(std::move(to));
 
 	auto fpsFont = dae::ResourceManager::GetInstance().LoadFont("upheavtt.ttf", 18);
 	auto fpsObject = std::make_unique<dae::GameObject>();
@@ -56,39 +41,7 @@ void load()
 	scene.Add(std::move(fpsObject));
 
 	//===============================================================================================================
-	//ENCIRCLING COMPONENT(PARENT CHILD RELATION)
-	//===============================================================================================================
-
-	//auto enCircleCenter = std::make_unique<GameObject>();
-	//enCircleCenter->SetLocalPosition(100, 300);
-	//
-	//auto firstEncircleObject = std::make_unique<GameObject>();
-	//TextureComponent* texture = &firstEncircleObject->AddComponent<TextureComponent>();
-	//texture->SetTexture("Resources/Sprites/Walking0.png");
-	//firstEncircleObject->AddComponent<Encircle>(40.f, 2.f);
-	//firstEncircleObject->SetParent(enCircleCenter.get());
-	//
-	//auto secondEncircleObject = std::make_unique<GameObject>();
-	//texture = &secondEncircleObject->AddComponent<TextureComponent>();
-	//texture->SetTexture("Resources/Sprites/Walking0.png");
-	//secondEncircleObject->AddComponent<Encircle>(20.f, -5.f);
-	//secondEncircleObject->SetParent(firstEncircleObject.get());
-	//
-	////Move after parenting, pointers invalid after move
-	//scene.Add(std::move(enCircleCenter));
-	//scene.Add(std::move(firstEncircleObject));
-	//scene.Add(std::move(secondEncircleObject));
-
-	//===============================================================================================================
-	//IMGUI AND TRASH THE CACHE
-	//===============================================================================================================
-
-	//auto ImGuiObject = std::make_unique<GameObject>();
-	//&ImGuiObject->AddComponent<ImGuiComponent>();
-	//scene.Add(std::move(ImGuiObject));
-
-	//===============================================================================================================
-	//2 CONTROLLERS
+	//2 PLAYERS (1 KEYBOARD, 1 CONTROLLER)
 	//===============================================================================================================
 	auto font = dae::ResourceManager::GetInstance().LoadFont("upheavtt.ttf", 14);
 	auto player1ControlsText = std::make_unique<dae::GameObject>();

@@ -6,9 +6,9 @@
 
 namespace dae
 {
-	//template<typename... Args>
+	template<typename T>
 	class Subject final {
-		std::vector<IObserver*> m_observers{};
+		std::vector<IObserver<T>*> m_observers{};
 	public:
 		~Subject() = default;
 		//{
@@ -17,18 +17,18 @@ namespace dae
 		//		observer->OnSubjectDestroy();
 		//	}
 		//}
-		void AddObserver(IObserver* observer)
+		void AddObserver(IObserver<T>* observer)
 		{
 			m_observers.push_back(observer);
 		}
-		void RemoveObserver(IObserver* observer)
+		void RemoveObserver(IObserver<T>* observer)
 		{
 			m_observers.erase(std::remove(
 				m_observers.begin(),
 				m_observers.end(), observer),
 				m_observers.end());
 		}
-		void Notify(EventType event)
+		void Notify(T event)
 		{
 			for (auto& observer : m_observers)
 			{

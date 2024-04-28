@@ -1,12 +1,12 @@
 #pragma once
-#include "Components.h"
-#include "Observer.h"
+#include "GameComponents.h"
+//#include "Observer.h"
 #include "GameSystems.h"
 
-class LivesDisplayComponent final : public dae::Component, public dae::IObserver
+class LivesDisplayComponent final : public dae::Component, public dae::IObserver<game::EventType>
 {
 public:
-	LivesDisplayComponent(dae::GameObject* pOwner, dae::PlayerComponent* player);
+	LivesDisplayComponent(dae::GameObject* pOwner, game::PlayerComponent* player);
 
 	//~LivesDisplayComponent() override;
 
@@ -15,18 +15,18 @@ public:
 	LivesDisplayComponent& operator=(const LivesDisplayComponent& other) = delete;
 	LivesDisplayComponent& operator=(LivesDisplayComponent&& other) noexcept = delete;
 
-	void HandleEvent(EventType event) override;
+	void HandleEvent(game::EventType event) override;
 
 private:
 	dae::TextComponent* m_pTextComponent;
 	std::string m_Text;
-	dae::PlayerComponent* m_pPlayer{};
+	game::PlayerComponent* m_pPlayer{};
 };
 
-class ScoreDisplayComponent final : public dae::Component, public dae::IObserver
+class ScoreDisplayComponent final : public dae::Component, public dae::IObserver<game::EventType>
 {
 public:
-	ScoreDisplayComponent(dae::GameObject* pOwner, dae::ScoreSystem* score, int idx);
+	ScoreDisplayComponent(dae::GameObject* pOwner, game::ScoreSystem* score, int idx);
 
 	//~ScoreDisplayComponent() override;
 
@@ -35,14 +35,14 @@ public:
 	ScoreDisplayComponent& operator=(const ScoreDisplayComponent& other) = delete;
 	ScoreDisplayComponent& operator=(ScoreDisplayComponent&& other) noexcept = delete;
 
-	void HandleEvent(EventType event) override;
+	void HandleEvent(game::EventType event) override;
 
 private:
 	void UpdateScoreText();
 
 	dae::TextComponent* pTextComponent;
 	std::string m_Text;
-	dae::ScoreSystem* m_pScore{};
+	game::ScoreSystem* m_pScore{};
 	int m_Idx{};
 };
 

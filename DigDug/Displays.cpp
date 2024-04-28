@@ -4,7 +4,7 @@
 
 #pragma region LivesDisplay
 
-LivesDisplayComponent::LivesDisplayComponent(dae::GameObject* pOwner, dae::PlayerComponent* player)
+LivesDisplayComponent::LivesDisplayComponent(dae::GameObject* pOwner, game::PlayerComponent* player)
 	:Component(pOwner)
 	, m_pTextComponent{ GetOwner()->GetComponent<dae::TextComponent>() }
 	, m_Text{ "Lives: " }
@@ -17,15 +17,15 @@ LivesDisplayComponent::LivesDisplayComponent(dae::GameObject* pOwner, dae::Playe
 //	m_pPlayer->RemoveObserver(this);
 //}
 
-void LivesDisplayComponent::HandleEvent(EventType event)
+void LivesDisplayComponent::HandleEvent(game::EventType event)
 {
 	switch (event)
 	{
-	case EventType::START_GAME:
+	case game::EventType::START_GAME:
 		m_Text = "LIVES: " + std::to_string(m_pPlayer->GetLives());
 		m_pTextComponent->SetText(m_Text);
 		break;
-	case EventType::PLAYER_DIED:
+	case game::EventType::PLAYER_DIED:
 		m_Text = "LIVES: " + std::to_string(m_pPlayer->GetLives());
 		m_pTextComponent->SetText(m_Text);
 		break;
@@ -37,7 +37,7 @@ void LivesDisplayComponent::HandleEvent(EventType event)
 
 #pragma region ScoreDisplay
 
-ScoreDisplayComponent::ScoreDisplayComponent(dae::GameObject* pOwner, dae::ScoreSystem* score, int idx)
+ScoreDisplayComponent::ScoreDisplayComponent(dae::GameObject* pOwner, game::ScoreSystem* score, int idx)
 	:Component(pOwner)
 	, pTextComponent{ GetOwner()->GetComponent<dae::TextComponent>() }
 	, m_Text{ "SCORE: " }
@@ -54,15 +54,15 @@ ScoreDisplayComponent::ScoreDisplayComponent(dae::GameObject* pOwner, dae::Score
 //	}
 //}
 
-void ScoreDisplayComponent::HandleEvent(EventType event)
+void ScoreDisplayComponent::HandleEvent(game::EventType event)
 {
 	switch (event)
 	{
-	case EventType::ADD_POINTS:
+	case game::EventType::ADD_POINTS:
 		UpdateScoreText();
 		pTextComponent->SetText(m_Text);
 		break;
-	case EventType::START_GAME:
+	case game::EventType::START_GAME:
 		UpdateScoreText();
 		pTextComponent->SetText(m_Text);
 	default:

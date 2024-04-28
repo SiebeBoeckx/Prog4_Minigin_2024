@@ -526,25 +526,6 @@ namespace dae
         //*m_pString += string;
     }
 #pragma endregion
-#pragma region PlayerComponent
-    PlayerComponent::PlayerComponent(dae::GameObject* pOwner, int playerNr, int lives)
-        :Component(pOwner)
-        ,m_PlayerNr{ playerNr }
-        ,m_Lives{lives}
-    {
-        m_pPlayerSubject = std::make_unique<Subject>();
-    }
-
-    void PlayerComponent::AddObserver(IObserver* obs)
-    {
-        m_pPlayerSubject->AddObserver(obs);
-    }
-
-    void PlayerComponent::RemoveObserver(IObserver* obs)
-    {
-        m_pPlayerSubject->RemoveObserver(obs);
-    }
-#pragma endregion
 #pragma region ColliderComponent
 
     ColliderComponent::ColliderComponent(GameObject* go, std::string tag)

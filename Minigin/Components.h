@@ -179,32 +179,7 @@ namespace dae
 		int* m_pSamples{ new int{ 100 } };
 	};
 
-	class PlayerComponent final : public Component
-	{
-	public:
-		PlayerComponent(dae::GameObject* pOwner, int playerNr, int lives = 3);
-
-		void AddObserver(IObserver* obs);
-		void RemoveObserver(IObserver* obs);
-		int GetLives() const { return m_Lives; }
-
-		void LoseLife()
-		{
-			--m_Lives;
-			m_pPlayerSubject->Notify(EventType::PLAYER_DIED);
-			if (m_Lives <= 0)
-			{
-				m_pPlayerSubject->Notify(EventType::GAME_OVER);
-			}
-		}
-	private:
-		const int m_PlayerNr;
-		int m_Lives;
-
-		std::unique_ptr<Subject> m_pPlayerSubject{};
-	};
-
-	class ColliderComponent : public Component
+	class ColliderComponent final : public Component
 	{
 	public:
 		struct Collider

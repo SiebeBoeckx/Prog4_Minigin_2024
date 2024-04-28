@@ -1,6 +1,6 @@
 #include "GameSystems.h"
 
-namespace dae
+namespace game
 {
 	void ScoreSystem::HandleEvent(EventType event)
 	{

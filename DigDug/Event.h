@@ -1,15 +1,18 @@
 #pragma once
 #include <cstdint>
 
-enum EventType {
-	ADD_POINTS,
-	PLAYER_DIED,
-	GAME_WIN,
-	GAME_OVER,
-	START_GAME,
-	PICKUP_ITEM_P1,
-	PICKUP_ITEM_P2
-};
+namespace game
+{
+	enum EventType {
+		ADD_POINTS,
+		PLAYER_DIED,
+		GAME_WIN,
+		GAME_OVER,
+		START_GAME,
+		PICKUP_ITEM_P1,
+		PICKUP_ITEM_P2
+	};
+}
 
 //template<typename... EventArg>
 //struct Event {

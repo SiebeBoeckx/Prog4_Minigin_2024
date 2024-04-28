@@ -1,4 +1,5 @@
 #include "GameSystems.h"
+#include "ServiceLocator.h"
 
 namespace game
 {
@@ -9,10 +10,12 @@ namespace game
 		case EventType::PICKUP_ITEM_P1:
 			m_PointsPlayer1 += 10;
 			m_pScoreSubject1->Notify(ADD_POINTS);
+			dae::ServiceLocator::GetSoundSystem().PlaySound("../Data/Resources/Sounds/Pickup.mp3", 10, 0);
 			break;
 		case EventType::PICKUP_ITEM_P2:
 			m_PointsPlayer2 += 10;
 			m_pScoreSubject2->Notify(ADD_POINTS);
+			dae::ServiceLocator::GetSoundSystem().PlaySound("../Data/Resources/Sounds/Pickup.mp3", 10, 0);
 			break;
 		default:
 			break;

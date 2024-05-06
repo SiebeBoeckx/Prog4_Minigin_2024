@@ -38,15 +38,18 @@ namespace dae
         void PlaySound(const std::string& fileName, int volume, int loops)
         {
             // Load file if not loaded already
-            if (!m_SoundsMap.contains(fileName))
             {
-                // Error, can't load file
-                if (!LoadSound(fileName))
+                std::unique_lock lock(m_MapMutex);
+
+                if (!m_SoundsMap.contains(fileName))
                 {
-                    return;
+                    // Error, can't load file
+                    if (!LoadSound(fileName))
+                    {
+                        return;
+                    }
                 }
             }
-
             // Volume == percentage
             volume = (MIX_MAX_VOLUME * volume) / 100;
 
@@ -69,6 +72,7 @@ namespace dae
         }
 
         std::map<std::string, Mix_Chunk*> m_SoundsMap;
+        std::mutex m_MapMutex;
     };
 
     SDLSoundSystem::SDLSoundSystem()
@@ -115,14 +119,13 @@ namespace dae
             }
 
             SoundEvent event = m_EventQueue.front();
-            //Wait till sound finished loading if needed before continuing, otherwise some sounds might not be loaded/played
+            m_EventQueue.pop();
+            lock.unlock();
+            //Unlock here, no need to lock the queue after popping the sound to be loaded/played
             if (event.type == SoundType::Sound)
             {
                 m_pSDL_MixerImpl->PlaySound(event.fileName, event.volume, event.loops);
             }
-            m_EventQueue.pop();
-            lock.unlock();
-
         }
     }
 #pragma endregion

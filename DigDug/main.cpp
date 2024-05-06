@@ -13,6 +13,7 @@
 //#include "Event.h"
 //#include "GameComponents.h"
 #include "ServiceLocator.h"
+#include "Wall.h"
 
 void load();
 int main(int, char* []) {
@@ -183,6 +184,12 @@ void load()
 	scoreDisplayObject->SetLocalPosition(40, 160);
 	scene.Add(std::move(scoreDisplayObject));
 
+	//TEST WALL
+	auto wallObject = std::make_unique<dae::GameObject>();
+	wallObject->AddComponent<dae::TextureComponent>();
+	wallObject->AddComponent<game::WallComponent>(16.f);
+	wallObject->SetLocalPosition(300, 400);
+	scene.Add(std::move(wallObject));
 
 	// START GAME
 	sceneStartSubject->Notify(game::EventType::START_GAME);

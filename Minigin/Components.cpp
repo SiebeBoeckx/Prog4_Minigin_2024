@@ -126,7 +126,7 @@ namespace dae
 #pragma endregion
 #pragma region FPS
 
-    void dae::FPSComponent::Update(float deltaT)
+    void FPSComponent::Update(float deltaT)
     {
         if (m_pOwnerText == nullptr) //Check if the text pointer is set
         {

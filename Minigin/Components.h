@@ -194,12 +194,14 @@ namespace dae
 		void SetDimensions(float width, float height);
 		void SetPosition(float xPos, float yPos);
 		Collider GetColliderBox() { return m_ColliderBox; }
-		const glm::vec3 GetPosition() const { return { m_ColliderBox.xMin, m_ColliderBox.yMin, 0 }; }
+		const glm::vec3 GetGlobalPosition() const { return { m_ColliderBox.xMin, m_ColliderBox.yMin, 0 }; }
+		const glm::vec2 GetLocalPosition() const { return { m_LocalPos.x, m_LocalPos.y }; }
 		std::string GetTag() { return m_Tag; };
 
 	private:
 		Collider m_ColliderBox{};
 		std::string m_Tag{ "ALL" };
 		const Transform* m_pOwnerGlobalTransform{ nullptr };
+		glm::vec3 m_LocalPos{};
 	};
 }

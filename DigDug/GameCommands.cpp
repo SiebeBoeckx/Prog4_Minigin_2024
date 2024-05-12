@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "Displays.h"
 #include "CollisionManager.h"
+#include <iostream>
 
 
 using namespace dae;
@@ -21,9 +22,10 @@ namespace game
 		}
 		const auto& collisions = CollisionManager::GetInstance().GetColliders();
 
-		const glm::vec3 curPos = collider->GetPosition();
-		const glm::vec3 newPos = curPos + glm::vec3{ m_Dir * m_MoveSpeed * deltaT, 0 };
+		const glm::vec2 curPos = collider->GetLocalPosition();
+		const glm::vec2 newPos = curPos + glm::vec2{ m_Dir * m_MoveSpeed * deltaT };
 		collider->SetPosition(newPos.x, newPos.y);
+		collider->Update(0.f);
 
 		for (auto collision : collisions)
 		{
@@ -41,7 +43,9 @@ namespace game
 				return;
 			}
 		}
-
+		//std::cout << curPos.x << ", " << curPos.y << '\n';
+		//std::cout << m_pOwner->GetGlobalTransform()->GetPosition().x << ", " << m_pOwner->GetGlobalTransform()->GetPosition().y << ", " << m_pOwner->GetGlobalTransform()->GetPosition().z << '\n';
+		collider->SetPosition(curPos.x, curPos.y);
 		m_pOwner->Translate(m_Dir * m_MoveSpeed * deltaT);
 	}
 

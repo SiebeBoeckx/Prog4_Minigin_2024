@@ -4,7 +4,7 @@
 
 namespace game
 {
-	class WallComponent : public dae::Component
+	class WallComponent final : public dae::Component
 	{
 	public:
 		WallComponent(dae::GameObject* pOwner, float size);

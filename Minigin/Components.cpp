@@ -575,8 +575,8 @@ namespace dae
     {
         const auto myPosition = m_pOwnerGlobalTransform->GetPosition();
 
-        m_ColliderBox.xMin = myPosition.x;
-        m_ColliderBox.yMin = myPosition.y;           
+        m_ColliderBox.xMin = myPosition.x + m_LocalPos.x;
+        m_ColliderBox.yMin = myPosition.y + m_LocalPos.y;   
     }
 
     void ColliderComponent::SetDimensions(float width, float height)
@@ -588,8 +588,8 @@ namespace dae
 
     void ColliderComponent::SetPosition(float xPos, float yPos)
     {
-        m_ColliderBox.xMin = xPos;
-        m_ColliderBox.yMin = yPos;
+        m_LocalPos.x = xPos;
+        m_LocalPos.y = yPos;
     }
 
 #pragma endregion

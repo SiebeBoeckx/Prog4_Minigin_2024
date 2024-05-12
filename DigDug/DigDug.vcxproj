@@ -159,6 +159,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Boulder.cpp" />
+    <ClCompile Include="DemoLevel.cpp" />
     <ClCompile Include="Displays.cpp" />
     <ClCompile Include="GameCommands.cpp" />
     <ClCompile Include="GameComponents.cpp" />
@@ -167,12 +169,17 @@
     <ClCompile Include="Wall.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Boulder.h" />
+    <ClInclude Include="DemoLevel.h" />
     <ClInclude Include="Displays.h" />
     <ClInclude Include="Event.h" />
     <ClInclude Include="GameCommands.h" />
     <ClInclude Include="GameComponents.h" />
     <ClInclude Include="GameSystems.h" />
     <ClInclude Include="Wall.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="StateGraphs.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

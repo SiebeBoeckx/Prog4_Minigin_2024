@@ -3,6 +3,8 @@
 
 class BoulderComponent; // Forward declaration
 class IdleState;
+class FallingState;
+class BreakState;
 
 class BoulderState
 {
@@ -22,6 +24,8 @@ public:
 	virtual void OnExit() = 0;
 
 	static IdleState m_Idle;
+	static FallingState m_Falling;
+	static BreakState m_Breaking;
 };
 
 class IdleState final : public BoulderState
@@ -32,6 +36,28 @@ public:
 
 	virtual void Update(float) override;
 	virtual void OnEnter() override {};
+	virtual void OnExit() override {};
+};
+
+class FallingState final : public BoulderState
+{
+public:
+	FallingState(BoulderComponent* pBoulder);
+	~FallingState() = default;
+
+	virtual void Update(float) override;
+	virtual void OnEnter() override;
+	virtual void OnExit() override {};
+};
+
+class BreakState final : public BoulderState
+{
+public:
+	BreakState(BoulderComponent* pBoulder);
+	~BreakState() = default;
+
+	virtual void Update(float) override {};
+	virtual void OnEnter() override;
 	virtual void OnExit() override {};
 };
 

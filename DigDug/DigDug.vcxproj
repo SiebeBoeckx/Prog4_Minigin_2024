@@ -90,7 +90,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(SolutionDir)Minigin;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\rapidjson-master\include\rapidjson;$(SolutionDir)Minigin;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -109,7 +109,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(SolutionDir)Minigin;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\rapidjson-master\include\rapidjson;$(SolutionDir)Minigin;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -128,7 +128,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(SolutionDir)Minigin;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\rapidjson-master\include\rapidjson;$(SolutionDir)Minigin;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -147,7 +147,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(SolutionDir)Minigin;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\rapidjson-master\include\rapidjson;$(SolutionDir)Minigin;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -165,6 +165,7 @@
     <ClCompile Include="GameCommands.cpp" />
     <ClCompile Include="GameComponents.cpp" />
     <ClCompile Include="GameSystems.cpp" />
+    <ClCompile Include="LevelLoader.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Wall.cpp" />
   </ItemGroup>
@@ -176,6 +177,7 @@
     <ClInclude Include="GameCommands.h" />
     <ClInclude Include="GameComponents.h" />
     <ClInclude Include="GameSystems.h" />
+    <ClInclude Include="LevelLoader.h" />
     <ClInclude Include="Wall.h" />
   </ItemGroup>
   <ItemGroup>

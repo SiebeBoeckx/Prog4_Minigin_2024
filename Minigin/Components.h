@@ -188,6 +188,7 @@ namespace dae
 		};
 
 		ColliderComponent(GameObject* go, std::string tag);
+		~ColliderComponent() override;
 
 		bool IsColliding(ColliderComponent* otherCollider) const;
 		void Update(float) override;

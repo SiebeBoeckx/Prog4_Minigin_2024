@@ -539,6 +539,11 @@ namespace dae
         }
     }
 
+    ColliderComponent::~ColliderComponent()
+    {
+        CollisionManager::GetInstance().RemoveCollider(this);
+    }
+
     bool ColliderComponent::IsColliding(ColliderComponent* otherCollider) const
     {
         // if has the same tag, do not compare! ignore collision

@@ -3,6 +3,7 @@
 #include "InputManager.h"
 #include "GameCommands.h"
 #include "Displays.h"
+#include "LevelLoader.h"
 #include "Wall.h"
 
 DemoLevel::DemoLevel(dae::Scene* pScene)
@@ -44,32 +45,41 @@ DemoLevel::DemoLevel(dae::Scene* pScene)
 	player1.get()->SetLocalPosition(100, 400);
 	game::PlayerComponent* playerComp = &player1->AddComponent<game::PlayerComponent>(playerIdx);
 	dae::ColliderComponent* colliderComp = &player1->AddComponent<dae::ColliderComponent>("PLAYER");
-	colliderComp->SetDimensions(15.2f, 15.2f);
+	colliderComp->SetDimensions(16.f, 16.f);
 	//colliderComp->SetPosition(100, 400);
 
 	auto moveUp = std::make_unique<game::MoveCommand>(player1.get(), glm::vec2{ 0, -1 }, 50.f);
+	auto moveUpSecondary = std::make_unique<game::MoveCommand>(player1.get(), glm::vec2{ 0, -1 }, 50.f);
 	auto moveDown = std::make_unique<game::MoveCommand>(player1.get(), glm::vec2{ 0, 1 }, 50.f);
+	auto moveDownSecondary = std::make_unique<game::MoveCommand>(player1.get(), glm::vec2{ 0, 1 }, 50.f);
 	auto moveRight = std::make_unique<game::MoveCommand>(player1.get(), glm::vec2{ 1, 0 }, 50.f);
+	auto moveRightSecondary = std::make_unique<game::MoveCommand>(player1.get(), glm::vec2{ 1, 0 }, 50.f);
 	auto moveLeft = std::make_unique<game::MoveCommand>(player1.get(), glm::vec2{ -1, 0 }, 50.f);
+	auto moveLeftSecondary = std::make_unique<game::MoveCommand>(player1.get(), glm::vec2{ -1, 0 }, 50.f);
 
 	auto addPoints = std::make_unique<game::PickupItem_Command_P1>(&game::ScoreSystem::GetInstance());
 	auto loseLife = std::make_unique<game::LoseLifeCommand>(player1.get());
 
 	// UP
 	dae::InputManager::GetInstance().AddControllerCommand(dae::XBox360Controller::Button::DPadUp, std::move(moveUp), controllerIdx, dae::InputManager::KeyState::Pressed);
+	dae::InputManager::GetInstance().AddKeyboardCommand(SDL_SCANCODE_W, std::move(moveUpSecondary), dae::InputManager::KeyState::Pressed);
 	// DOWN
 	dae::InputManager::GetInstance().AddControllerCommand(dae::XBox360Controller::Button::DPadDown, std::move(moveDown), controllerIdx, dae::InputManager::KeyState::Pressed);
+	dae::InputManager::GetInstance().AddKeyboardCommand(SDL_SCANCODE_S, std::move(moveDownSecondary), dae::InputManager::KeyState::Pressed);
 	// RIGHT
 	dae::InputManager::GetInstance().AddControllerCommand(dae::XBox360Controller::Button::DPadRight, std::move(moveRight), controllerIdx, dae::InputManager::KeyState::Pressed);
+	dae::InputManager::GetInstance().AddKeyboardCommand(SDL_SCANCODE_D, std::move(moveRightSecondary), dae::InputManager::KeyState::Pressed);
 	// LEFT
 	dae::InputManager::GetInstance().AddControllerCommand(dae::XBox360Controller::Button::DPadLeft, std::move(moveLeft), controllerIdx, dae::InputManager::KeyState::Pressed);
+	dae::InputManager::GetInstance().AddKeyboardCommand(SDL_SCANCODE_A, std::move(moveLeftSecondary), dae::InputManager::KeyState::Pressed);
 
 	// ADD
 	dae::InputManager::GetInstance().AddControllerCommand(dae::XBox360Controller::Button::ButtonY, std::move(addPoints), controllerIdx, dae::InputManager::KeyState::Down);
 	// LOSE LIFE
 	dae::InputManager::GetInstance().AddControllerCommand(dae::XBox360Controller::Button::ButtonX, std::move(loseLife), controllerIdx, dae::InputManager::KeyState::Down);
 
-	pScene->Add(std::move(player1));
+	game::LevelCreator::GetInstance().SetPlayer1(player1.get());
+	
 
 	// LIVES DISPLAY PLAYER 1
 	auto displayFont = dae::ResourceManager::GetInstance().LoadFont("upheavtt.ttf", 14);
@@ -119,20 +129,19 @@ DemoLevel::DemoLevel(dae::Scene* pScene)
 	loseLife = std::make_unique<game::LoseLifeCommand>(player2.get());
 
 	// UP
-	dae::InputManager::GetInstance().AddKeyboardCommand(SDL_SCANCODE_W, std::move(moveUp), dae::InputManager::KeyState::Pressed);
+	dae::InputManager::GetInstance().AddControllerCommand(dae::XBox360Controller::Button::DPadUp, std::move(moveUp), controllerIdx, dae::InputManager::KeyState::Pressed);
 	// DOWN
-	dae::InputManager::GetInstance().AddKeyboardCommand(SDL_SCANCODE_S, std::move(moveDown), dae::InputManager::KeyState::Pressed);
+	dae::InputManager::GetInstance().AddControllerCommand(dae::XBox360Controller::Button::DPadDown, std::move(moveDown), controllerIdx, dae::InputManager::KeyState::Pressed);
 	// RIGHT
-	dae::InputManager::GetInstance().AddKeyboardCommand(SDL_SCANCODE_D, std::move(moveRight), dae::InputManager::KeyState::Pressed);
+	dae::InputManager::GetInstance().AddControllerCommand(dae::XBox360Controller::Button::DPadRight, std::move(moveRight), controllerIdx, dae::InputManager::KeyState::Pressed);
 	// LEFT
-	dae::InputManager::GetInstance().AddKeyboardCommand(SDL_SCANCODE_A, std::move(moveLeft), dae::InputManager::KeyState::Pressed);
+	dae::InputManager::GetInstance().AddControllerCommand(dae::XBox360Controller::Button::DPadLeft, std::move(moveLeft), controllerIdx, dae::InputManager::KeyState::Pressed);
 
 	// ADD POINTS
 	dae::InputManager::GetInstance().AddKeyboardCommand(SDL_SCANCODE_P, std::move(addPoints2), dae::InputManager::KeyState::Down);
 	// LOSE LIFE
 	dae::InputManager::GetInstance().AddKeyboardCommand(SDL_SCANCODE_L, std::move(loseLife), dae::InputManager::KeyState::Down);
 
-	pScene->Add(std::move(player2));
 
 	// LIVES DISPLAY PLAYER 2
 	displayFont = dae::ResourceManager::GetInstance().LoadFont("upheavtt.ttf", 14);
@@ -162,12 +171,16 @@ DemoLevel::DemoLevel(dae::Scene* pScene)
 	pScene->Add(std::move(scoreDisplayObject));
 
 	//TEST WALL
-	auto wallObject = std::make_unique<dae::GameObject>();
-	wallObject->AddComponent<dae::TextureComponent>();
-	wallObject->AddComponent<game::WallComponent>(16.f);
-	wallObject->SetLocalPosition(300, 400);
-	pScene->Add(std::move(wallObject));
+	//auto wallObject = std::make_unique<dae::GameObject>();
+	//wallObject->AddComponent<dae::TextureComponent>();
+	//wallObject->AddComponent<game::WallComponent>(32.f);
+	//wallObject->SetLocalPosition(300, 400);
+	//pScene->Add(std::move(wallObject));
+
+	game::LevelCreator::GetInstance().CreateLevel(L"../Data/level1.json", pScene);
 
 	// START GAME
+	pScene->Add(std::move(player1));
+	pScene->Add(std::move(player2));
 	sceneStartSubject->Notify(game::EventType::START_GAME);
 }

@@ -50,7 +50,14 @@ namespace dae
 
     void TextureComponent::SetTexture(const std::string& filename)
     {
-        m_texture = ResourceManager::GetInstance().LoadTexture(filename);
+        //if (m_texture.get())
+        //{
+        //    m_texture.reset();
+        //}
+        //Destructor gets called in the assignment here before the new value is assigned, saw through debugging
+       // Use a temporary variable to ensure strong exception safety
+        auto newTexture = ResourceManager::GetInstance().LoadTexture(filename);
+        m_texture = std::move(newTexture);
     }
 
     void TextureComponent::SetTexture(std::unique_ptr<Texture2D> texture)
@@ -544,7 +551,7 @@ namespace dae
         CollisionManager::GetInstance().RemoveCollider(this);
     }
 
-    bool ColliderComponent::IsColliding(ColliderComponent* otherCollider) const
+    bool ColliderComponent::IsColliding(const ColliderComponent* otherCollider) const
     {
         // if has the same tag, do not compare! ignore collision
         std::string otherTag = otherCollider->GetTag();

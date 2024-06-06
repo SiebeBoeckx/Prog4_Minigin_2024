@@ -13,11 +13,14 @@ namespace dae
 	public:
 		CollisionManager();
 		~CollisionManager() = default;
+		void Update();
 		void AddCollider(ColliderComponent* collider);
 		void RemoveCollider(ColliderComponent* collider);
 		const std::vector<ColliderComponent*>& GetColliders() const;
+		const bool DidCountChange() const { return m_CountChanged; };
 
 	private:
 		std::vector<ColliderComponent*> m_pColliders;
+		bool m_CountChanged{ false };
 	};
 }

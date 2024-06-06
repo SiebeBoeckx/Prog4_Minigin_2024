@@ -16,10 +16,11 @@ namespace game
 	{
 	public:
 		WallComponent(dae::GameObject* pOwner, float size);
-		~WallComponent();
+		~WallComponent() = default;
 
 		virtual void Update(float) override;
 		void RemoveSide(Directions direction);
+		void DigWalls(const dae::ColliderComponent* playerCollider);
 
 	private:
 		const glm::vec2 m_Pos;

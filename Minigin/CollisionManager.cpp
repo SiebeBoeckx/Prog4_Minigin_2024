@@ -6,6 +6,11 @@ dae::CollisionManager::CollisionManager() :
 {
 }
 
+void dae::CollisionManager::Update()
+{
+	m_CountChanged = false;
+}
+
 void dae::CollisionManager::AddCollider(ColliderComponent* colliders)
 {
 	auto i = std::find(m_pColliders.begin(), m_pColliders.end(), colliders);
@@ -13,6 +18,7 @@ void dae::CollisionManager::AddCollider(ColliderComponent* colliders)
 	{
 		m_pColliders.push_back(colliders);
 	}
+	m_CountChanged = true;
 }
 
 void dae::CollisionManager::RemoveCollider(ColliderComponent* colliders)
@@ -22,6 +28,7 @@ void dae::CollisionManager::RemoveCollider(ColliderComponent* colliders)
 	{
 		m_pColliders.erase(i);
 	}
+	m_CountChanged = true;
 }
 
 const std::vector<dae::ColliderComponent*>& dae::CollisionManager::GetColliders() const

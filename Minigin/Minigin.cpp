@@ -14,6 +14,7 @@
 
 #include "Scene.h"
 #include "GameObject.h"
+#include "CollisionManager.h"
 
 SDL_Window* g_window{};
 
@@ -113,6 +114,8 @@ void dae::Minigin::Run(const std::function<void()>& load)
 		//renderer.Render();
 		//renderer.RenderUI();
 		renderer.CombinedRender();
+
+		CollisionManager::GetInstance().Update();
 
 		const auto sleepTime = currentTime + milliseconds(m_MsPerFame) - high_resolution_clock::now();
 		std::this_thread::sleep_for(sleepTime);

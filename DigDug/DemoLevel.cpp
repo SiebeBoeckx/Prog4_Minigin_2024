@@ -45,6 +45,7 @@ DemoLevel::DemoLevel(dae::Scene* pScene)
 	player1.get()->SetLocalPosition(100, 400);
 	game::PlayerComponent* playerComp = &player1->AddComponent<game::PlayerComponent>(playerIdx);
 	dae::ColliderComponent* colliderComp = &player1->AddComponent<dae::ColliderComponent>("PLAYER");
+	player1->AddComponent<game::MoveableComponent>();
 	colliderComp->SetDimensions(16.f, 16.f);
 	//colliderComp->SetPosition(100, 400);
 
@@ -117,6 +118,7 @@ DemoLevel::DemoLevel(dae::Scene* pScene)
 	player2.get()->SetLocalPosition(50, 400);
 	playerComp = &player2->AddComponent<game::PlayerComponent>(playerIdx);
 	colliderComp = &player2->AddComponent<dae::ColliderComponent>("ENEMY");
+	player2->AddComponent<game::MoveableComponent>();
 	colliderComp->SetDimensions(15.2f, 15.2f);
 	//colliderComp->SetPosition(50, 400);
 

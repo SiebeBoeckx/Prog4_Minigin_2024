@@ -190,14 +190,14 @@ namespace dae
 		ColliderComponent(GameObject* go, std::string tag);
 		~ColliderComponent() override;
 
-		bool IsColliding(ColliderComponent* otherCollider) const;
+		bool IsColliding(const ColliderComponent* otherCollider) const;
 		void Update(float) override;
 		void SetDimensions(float width, float height);
 		void SetPosition(float xPos, float yPos);
-		Collider GetColliderBox() { return m_ColliderBox; }
+		const Collider GetColliderBox() const { return m_ColliderBox; }
 		const glm::vec3 GetGlobalPosition() const { return { m_ColliderBox.xMin, m_ColliderBox.yMin, 0 }; }
 		const glm::vec2 GetLocalPosition() const { return { m_LocalPos.x, m_LocalPos.y }; }
-		std::string GetTag() { return m_Tag; };
+		const std::string GetTag() const { return m_Tag; };
 
 	private:
 		Collider m_ColliderBox{};

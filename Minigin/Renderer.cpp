@@ -7,6 +7,7 @@
 
 #include "backends/imgui_impl_sdl2.h"
 #include "backends/imgui_impl_opengl3.h"
+#include <iostream>
 
 int GetOpenGLDriverIndex()
 {
@@ -81,11 +82,13 @@ void dae::Renderer::Destroy()
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();
 
-	if (m_renderer != nullptr)
-	{
-		SDL_DestroyRenderer(m_renderer);
-		m_renderer = nullptr;
-	}
+	//No need cuse already happens in SLD_Quit()?
+
+	//if (m_renderer != nullptr)
+	//{
+	//	SDL_DestroyRenderer(m_renderer);
+	//	m_renderer = nullptr;
+	//}
 }
 
 void dae::Renderer::RenderTexture(const Texture2D& texture, const float x, const float y) const

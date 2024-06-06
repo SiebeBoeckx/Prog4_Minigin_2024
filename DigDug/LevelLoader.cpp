@@ -58,8 +58,30 @@ bool game::LevelCreator::CreateLevel(const std::wstring& filePath, dae::Scene* s
 	}
 
 	// starting position of the grid for the level
-	glm::vec3 startPos{ 144.f, 64.f, 0.f };
+	glm::vec3 startPos{ 160.f, 64.f, 0.f };
 
+	//Outer collision frame
+	auto outerCollider = std::make_unique<dae::GameObject>();
+	outerCollider->SetLocalPosition(0.f, 0.f);
+	const float edgeThickness{ 1.f };
+	//Top wall
+	auto& topEdge = outerCollider->AddComponent<dae::ColliderComponent>("EDGE");
+	topEdge.SetPosition(startPos.x, startPos.y - edgeThickness);
+	topEdge.SetDimensions(static_cast<float>(tileSize * nrCols), edgeThickness);
+	//Bottom wall
+	auto& bottomEdge = outerCollider->AddComponent<dae::ColliderComponent>("EDGE");
+	bottomEdge.SetPosition(startPos.x, startPos.y + tileSize * nrRows - tileSize / 2.f + edgeThickness);
+	bottomEdge.SetDimensions(static_cast<float>(tileSize * nrCols), edgeThickness);
+	//Left wall
+	auto& leftEdge = outerCollider->AddComponent<dae::ColliderComponent>("EDGE");
+	leftEdge.SetPosition(startPos.x - edgeThickness, startPos.y);
+	leftEdge.SetDimensions(edgeThickness, static_cast<float>(tileSize * nrRows));
+	//Right wall
+	auto& rightEdge = outerCollider->AddComponent<dae::ColliderComponent>("EDGE");
+	rightEdge.SetPosition(startPos.x + tileSize * nrCols - tileSize / 2.f + edgeThickness, startPos.y);
+	rightEdge.SetDimensions(edgeThickness, static_cast<float>(tileSize * nrRows));
+
+	scene->Add(std::move(outerCollider));
 
 	for (int i = 0; i < nrRows; ++i)
 	{
@@ -94,7 +116,8 @@ bool game::LevelCreator::CreateLevel(const std::wstring& filePath, dae::Scene* s
 void game::LevelCreator::CreateWall(dae::Scene* scene, float xPos, float yPos, int type) const
 {
 	auto wallObject = std::make_unique<dae::GameObject>();
-	wallObject->AddComponent<dae::TextureComponent>();
+	auto& texComp = wallObject->AddComponent<dae::TextureComponent>();
+	texComp.SetTexture("Resources/Sprites/Wall.png");
 	auto& wallComp = wallObject->AddComponent<game::WallComponent>(static_cast<float>(m_TileSize));
 	wallObject->SetLocalPosition(xPos, yPos);
 	switch (type)

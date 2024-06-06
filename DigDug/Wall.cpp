@@ -1,6 +1,7 @@
 #pragma once
 #include "Wall.h"
 #include "GameObject.h"
+#include "GameSystems.h"
 
 game::WallComponent::WallComponent(dae::GameObject* pOwner, float size)
 	: Component(pOwner)
@@ -15,19 +16,19 @@ game::WallComponent::WallComponent(dae::GameObject* pOwner, float size)
 		switch (i)
 		{
 		case 0: //Top
-			newCollider->SetPosition(-size / 2 + size / 4, -size / 2 + size / 4);
+			newCollider->SetPosition(-size / 2 + size / 4 + wallThickness, -size / 2 + size / 4 + wallThickness);
 			newCollider->SetDimensions(size, wallThickness);
 			break;
 		case 1: //Bottom
-			newCollider->SetPosition(-size / 2 + size / 4, size - size / 4);
+			newCollider->SetPosition(-size / 2 + size / 4 + wallThickness, size - size / 4 - wallThickness);
 			newCollider->SetDimensions(size, wallThickness);
 			break;
 		case 2: //Left
-			newCollider->SetPosition(-size / 2 + size / 4, -size / 2 + size / 4);
+			newCollider->SetPosition(-size / 2 + size / 4 + wallThickness, -size / 2 + size / 4 + wallThickness);
 			newCollider->SetDimensions(wallThickness, size);
 			break;
 		case 3: //Right
-			newCollider->SetPosition(size - size / 4, -size / 2 + size / 4);
+			newCollider->SetPosition(size - size / 4 - wallThickness, -size / 2 + size / 4 + wallThickness);
 			newCollider->SetDimensions(wallThickness, size);
 			break;
 		}
@@ -36,10 +37,6 @@ game::WallComponent::WallComponent(dae::GameObject* pOwner, float size)
 
 	m_pTextureComp = pOwner->GetComponent<dae::TextureComponent>();
 	m_pTextureComp->SetTexture("Resources/Sprites/Wall.png");
-}
-
-game::WallComponent::~WallComponent()
-{
 }
 
 void game::WallComponent::Update(float)
@@ -102,4 +99,34 @@ void game::WallComponent::RemoveSide(Directions direction)
 	}
 
 	m_SideRemoved = true;
+}
+
+void game::WallComponent::DigWalls(const dae::ColliderComponent* playerCollider)
+{
+	for (int i{}; i < m_Colliders.size(); ++i)
+	{
+		if (!m_Colliders[i]->IsColliding(playerCollider))
+		{
+			continue;
+		}
+
+		switch (i)
+		{
+		case 0:
+			RemoveSide(Directions::Top);
+			break;
+		case 1:
+			RemoveSide(Directions::Bottom);
+			break;
+		case 2:
+			RemoveSide(Directions::Left);
+			break;
+		case 3:
+			RemoveSide(Directions::Right);
+			break;
+		default:
+			break;
+		}
+		//Add score here
+	}
 }

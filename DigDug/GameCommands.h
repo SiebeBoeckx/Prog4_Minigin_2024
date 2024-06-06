@@ -1,17 +1,18 @@
 #pragma once
 #include "Command.h"
-#include "Components.h"
+#include "GameComponents.h"
 #include "GameSystems.h"
 namespace game
 {
 	class MoveCommand : public dae::Command
 	{
 	public:
-		MoveCommand(dae::GameObject* pOwner, glm::vec2 dir, float moveSpeed = 10.f) : Command(), m_Dir{ dir }, m_pOwner{ pOwner }, m_MoveSpeed{ moveSpeed } {};
-		virtual void Execute(float deltaT) override;
+		MoveCommand(dae::GameObject* pOwner, glm::vec2 dir, float moveSpeed = 10.f);
+		virtual void Execute(float) override;
 	private:
 		dae::GameObject* m_pOwner{};
-		glm::vec2 m_Dir{};
+		game::MoveableComponent* m_pOwnerMoveableComp{ nullptr };
+		const glm::vec2 m_Dir{};
 		const float m_MoveSpeed{ 10.f };
 	};
 

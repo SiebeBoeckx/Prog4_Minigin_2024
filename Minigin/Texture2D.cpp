@@ -1,9 +1,19 @@
 #include <SDL.h>
 #include "Texture2D.h"
+#include <iostream>
 
 dae::Texture2D::~Texture2D()
 {
-	SDL_DestroyTexture(m_texture);
+	if (m_texture)
+	{
+		SDL_DestroyTexture(m_texture);
+		//if (const char* error = SDL_GetError(); *error != '\0')
+		//{
+		//	std::cerr << "SDL_DestroyTexture error: " << error << std::endl;
+		//	SDL_ClearError(); // Clear the error message after logging
+		//}
+		m_texture = nullptr;
+	}
 }
 
 glm::ivec2 dae::Texture2D::GetSize() const

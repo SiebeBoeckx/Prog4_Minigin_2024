@@ -14,22 +14,16 @@ namespace game
 		void AddObserver(dae::IObserver<game::EventType>* obs);
 		void RemoveObserver(dae::IObserver<game::EventType>* obs);
 		int GetLives() const { return m_Lives; }
+		void SetStartPos(glm::vec2 pos) { m_StartPos = pos; };
 
-		void LoseLife()
-		{
-			--m_Lives;
-			m_pPlayerSubject->Notify(EventType::PLAYER_DIED);
-			if (m_Lives <= 0)
-			{
-				m_pPlayerSubject->Notify(EventType::GAME_OVER);
-			}
-		}
+		void LoseLife();	
 	private:
 		const int m_PlayerNr;
 		int m_Lives;
 
 		std::unique_ptr<dae::Subject<game::EventType>> m_pPlayerSubject{};
 		std::vector<dae::ColliderComponent*> m_pColliders{};
+		glm::vec2 m_StartPos{};
 	};
 
 	class MoveableComponent final : public dae::Component
@@ -37,9 +31,10 @@ namespace game
 	public:
 		MoveableComponent(dae::GameObject* pOwner);
 
-		virtual void Update(float dt) override;
+		virtual void Update(float) override;
 		void SetTargetDir(glm::vec2 dir) { m_TargetDir = dir; };
 		const glm::vec2 GetPrevDir() const { return m_PrevDir; };
+		void Move(float dt);
 
 		float m_MoveSpeed{10.f};
 	private:
@@ -49,6 +44,5 @@ namespace game
 		std::vector<dae::ColliderComponent*> m_pColliders{};
 		dae::ColliderComponent* m_pOwnerCollider{};
 
-		void Move(float dt);
 	};
 }

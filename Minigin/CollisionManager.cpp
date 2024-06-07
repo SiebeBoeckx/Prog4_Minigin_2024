@@ -13,22 +13,22 @@ void dae::CollisionManager::Update()
 
 void dae::CollisionManager::AddCollider(ColliderComponent* colliders)
 {
+	m_CountChanged = true;
 	auto i = std::find(m_pColliders.begin(), m_pColliders.end(), colliders);
 	if (i == m_pColliders.end())
 	{
 		m_pColliders.push_back(colliders);
 	}
-	m_CountChanged = true;
 }
 
 void dae::CollisionManager::RemoveCollider(ColliderComponent* colliders)
 {
+	m_CountChanged = true;
 	auto i = std::find(m_pColliders.begin(), m_pColliders.end(), colliders);
 	if (i != m_pColliders.end())
 	{
 		m_pColliders.erase(i);
 	}
-	m_CountChanged = true;
 }
 
 const std::vector<dae::ColliderComponent*>& dae::CollisionManager::GetColliders() const

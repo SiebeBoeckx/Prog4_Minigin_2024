@@ -51,7 +51,7 @@ namespace dae
 		//Delete marked components
 		for (auto it{ m_pComponents.begin() }; it != m_pComponents.end(); ++it)
 		{
-			if (it->get()->GetMarkForDelete())
+			if (it->get()->GetInValid())
 			{
 				m_pComponents.erase(it);
 				break;

@@ -540,9 +540,9 @@ namespace dae
     {
         CollisionManager::GetInstance().AddCollider(this);
         //std::cout << "Added collider to manager!\n";
-        if (m_pOwnerGlobalTransform == nullptr) //Check if the transform pointer is set
+        if (m_pOwnerGlobalTransform == nullptr)
         {
-            m_pOwnerGlobalTransform = GetOwner()->GetGlobalTransform(); //This will only happen the first time
+            m_pOwnerGlobalTransform = GetOwner()->GetGlobalTransform();
         }
     }
 
@@ -604,5 +604,9 @@ namespace dae
         m_LocalPos.y = yPos;
     }
 
+    const bool Component::GetInValid() const
+    {
+        return m_MarkForDelete || m_pOwner == nullptr;
+    }
 #pragma endregion
 }

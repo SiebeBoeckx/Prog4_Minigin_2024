@@ -200,6 +200,7 @@ void game::LevelCreator::SpawnPlayer1(float xPos, float yPos, dae::Scene* scene,
 	texture->SetTexture("Resources/Sprites/Walking0.png");
 	player1->SetLocalPosition(xPos, yPos, 0);
 	game::PlayerComponent* playerComp = &player1->AddComponent<game::PlayerComponent>(m_PlayerIdx);
+	playerComp->SetStartPos({ xPos, yPos });
 	dae::ColliderComponent* colliderComp = &player1->AddComponent<dae::ColliderComponent>("PLAYER");
 	player1->AddComponent<game::MoveableComponent>();
 	colliderComp->SetDimensions(16.f, 16.f);
@@ -276,7 +277,7 @@ void game::LevelCreator::SpawnPooka(float xPos, float yPos, dae::Scene* scene) c
 	pooka->SetLocalPosition(xPos, yPos);
 	dae::ColliderComponent* colliderComp = &pooka->AddComponent<dae::ColliderComponent>("ENEMY");
 	colliderComp->SetDimensions(16.f, 16.f);
-	&pooka->AddComponent<game::PookaComponent>(16.f);
+	&pooka->AddComponent<game::PookaComponent>();
 
 	scene->Add(std::move(pooka));
 }

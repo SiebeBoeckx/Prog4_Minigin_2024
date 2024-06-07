@@ -8,7 +8,7 @@ namespace game
 	{
 	public:
 		MoveCommand(dae::GameObject* pOwner, glm::vec2 dir, float moveSpeed = 10.f);
-		virtual void Execute(float) override;
+		virtual void Execute(float dt) override;
 	private:
 		dae::GameObject* m_pOwner{};
 		game::MoveableComponent* m_pOwnerMoveableComp{ nullptr };

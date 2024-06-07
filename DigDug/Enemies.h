@@ -60,7 +60,7 @@ namespace game
 	class PookaComponent : public dae::Component
 	{
 	public:
-		PookaComponent(dae::GameObject* pOwner, float size);
+		PookaComponent(dae::GameObject* pOwner);
 		virtual ~PookaComponent() = default;
 
 		PookaComponent(const PookaComponent& other) = delete;
@@ -72,9 +72,9 @@ namespace game
 
 		PookaState* GetPookaSearchState() const { return m_pSearchState.get(); };
 		PookaState* GetPookaGhostState() const { return m_pGhostState.get(); };
+		dae::ColliderComponent* GetCollider() const { return m_pCollider; };
 	private:
 		dae::ColliderComponent* m_pCollider{ nullptr };
-		const float m_Size;
 		std::unique_ptr<SearchingState> m_pSearchState{ nullptr };
 		std::unique_ptr<GhostState> m_pGhostState{ nullptr };
 		PookaState* m_CurrentState{ nullptr };

@@ -9,8 +9,12 @@ namespace game
 		GAME_WIN,
 		GAME_OVER,
 		START_GAME,
+
 		PICKUP_ITEM_P1,
-		PICKUP_ITEM_P2
+		PICKUP_ITEM_P2,
+
+		DIG_P1,
+		DIG_P2
 	};
 }
 

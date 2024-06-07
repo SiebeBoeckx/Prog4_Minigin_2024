@@ -18,7 +18,7 @@ namespace game
 	{
 		m_pOwnerMoveableComp = pOwner->GetComponent<game::MoveableComponent>();
 	};
-	void MoveCommand::Execute(float)
+	void MoveCommand::Execute(float dt)
 	{
 		if (!m_pOwner)
 		{
@@ -30,6 +30,7 @@ namespace game
 		}
 		m_pOwnerMoveableComp->m_MoveSpeed = m_MoveSpeed;
 		m_pOwnerMoveableComp->SetTargetDir(m_Dir);
+		m_pOwnerMoveableComp->Move(dt);
 	}
 	
 	void PickupItem_Command_P1::Execute(float)

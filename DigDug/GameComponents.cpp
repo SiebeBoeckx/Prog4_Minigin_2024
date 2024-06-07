@@ -3,6 +3,7 @@
 #include "CollisionManager.h"
 #include "Wall.h"
 #include "LevelLoader.h"
+#include "GameSystems.h"
 #include <iostream>
 
 namespace game
@@ -27,6 +28,10 @@ namespace game
 
         for (auto& collision : m_pColliders)
         {
+            if (collision->GetInValid())
+            {
+                continue;
+            }
             if (!collision->IsColliding(playerCollider))
             {
                 continue;
@@ -35,6 +40,17 @@ namespace game
             {
                 game::WallComponent* wallComp = collision->GetOwner()->GetComponent<game::WallComponent>();
                 wallComp->DigWalls(playerCollider);
+                switch (m_PlayerNr)
+                {
+                case 0:
+                    game::ScoreSystem::GetInstance().HandleEvent(game::DIG_P1);
+                    break;
+                case 1:
+                    game::ScoreSystem::GetInstance().HandleEvent(game::DIG_P2);
+                    break;
+                default:
+                    break;
+                }
             }
         }
     }
@@ -48,7 +64,18 @@ namespace game
     {
         m_pPlayerSubject->RemoveObserver(obs);
     }
+    void PlayerComponent::LoseLife()
+    {
+        GetOwner()->SetLocalPosition(glm::vec3{ m_StartPos, 0 });
+        --m_Lives;
+        m_pPlayerSubject->Notify(EventType::PLAYER_DIED);
+        if (m_Lives <= 0)
+        {
+            m_pPlayerSubject->Notify(EventType::GAME_OVER);
+        }
+    }
 #pragma endregion
+#pragma region MoveableComp
     MoveableComponent::MoveableComponent(dae::GameObject* pOwner)
         :Component(pOwner)
         ,m_pOwner(pOwner)
@@ -56,12 +83,12 @@ namespace game
         m_pOwnerCollider = pOwner->GetComponent<dae::ColliderComponent>();
     }
 
-    void MoveableComponent::Update(float dt)
+    void MoveableComponent::Update(float)
     {
         if (m_TargetDir == -(m_PrevDir)) //Always allow change direction in horizontal or vertical axis
         {
             m_PrevDir = m_TargetDir;
-            Move(dt);
+            //Move(dt);
             return;
         }
 
@@ -78,7 +105,7 @@ namespace game
             //std::cout << "At grid point\n";
             m_PrevDir = m_TargetDir;
         }
-        Move(dt);
+        //Move(dt);
     }
     void MoveableComponent::Move(float dt)
     {
@@ -94,8 +121,12 @@ namespace game
         m_pOwnerCollider->SetPosition(newPos.x, newPos.y);
         m_pOwnerCollider->Update(0.f);
         
-        for (auto collision : m_pColliders)
+        for (auto& collision : m_pColliders)
         {
+            if (collision->GetInValid())
+            {
+                continue;
+            }
         	//skipping same collision
         	if (collision == m_pOwnerCollider)
         	{
@@ -122,3 +153,4 @@ namespace game
         m_pOwner->Translate(m_PrevDir * m_MoveSpeed * dt);
     }
 }
+#pragma endregion

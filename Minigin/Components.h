@@ -36,7 +36,8 @@ namespace dae
 
 		GameObject* GetOwner() const { return m_pOwner; };
 		void MarkForDelete() { m_MarkForDelete = true; };
-		const bool GetMarkForDelete() const { return m_MarkForDelete; };
+		//const bool GetMarkForDelete() const { return m_MarkForDelete; };
+		const bool GetInValid() const;
 
 	protected:
 		explicit Component(GameObject* pOwner) : m_pOwner(pOwner) {};

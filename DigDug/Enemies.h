@@ -20,12 +20,9 @@ namespace game
 		PookaState& operator=(const PookaState& other) = delete;
 		PookaState& operator=(PookaState&& other) = delete;
 
-		virtual void Update(float deltaT) = 0;
+		virtual PookaState* Update(float deltaT) = 0;
 		virtual void OnEnter() = 0;
 		virtual void OnExit() = 0;
-
-		static SearchingState m_Searching;
-		static GhostState m_Ghost;
 	};
 
 	class SearchingState final : public PookaState
@@ -34,13 +31,19 @@ namespace game
 		SearchingState(PookaComponent* pPooka);
 		~SearchingState() = default;
 
-		virtual void Update(float dt) override;
+		virtual PookaState* Update(float dt) override;
 		virtual void OnEnter() override;
 		virtual void OnExit() override {};
 	private:
-		glm::vec2 m_PrevDir{0.f, 0.f};
+		glm::vec2 m_Dir{1.f, 0.f};
 		float m_MoveSpeed{ 60.f };
 		glm::vec2 m_ClosestPlayerPos{ 0.f, 0.f };
+		const float m_MaxSearchTime{ 10.f };
+		float m_CurrentSeachTime{ 0.f };
+		std::vector<dae::ColliderComponent*> m_pColliders{};
+		dae::ColliderComponent* m_pOwnerCollider{};
+
+		glm::vec2 DirectionChecks(float dt, glm::vec2 prevDir);
 	};
 
 	class GhostState final : public PookaState
@@ -49,7 +52,7 @@ namespace game
 		GhostState(PookaComponent* pPooka);
 		~GhostState() = default;
 
-		virtual void Update(float) override;
+		virtual PookaState* Update(float) override;
 		virtual void OnEnter() override;
 		virtual void OnExit() override {};
 	};
@@ -58,16 +61,23 @@ namespace game
 	{
 	public:
 		PookaComponent(dae::GameObject* pOwner, float size);
-		~PookaComponent() = default;
+		virtual ~PookaComponent() = default;
 
 		PookaComponent(const PookaComponent& other) = delete;
 		PookaComponent(PookaComponent&& other) = delete;
 		PookaComponent& operator=(const PookaComponent& other) = delete;
 		PookaComponent& operator=(PookaComponent&& other) = delete;
+		
+		virtual void Update(float dt) override;
+
+		PookaState* GetPookaSearchState() const { return m_pSearchState.get(); };
+		PookaState* GetPookaGhostState() const { return m_pGhostState.get(); };
 	private:
 		dae::ColliderComponent* m_pCollider{ nullptr };
 		const float m_Size;
-		std::unique_ptr<PookaState> m_pState{ nullptr };
+		std::unique_ptr<SearchingState> m_pSearchState{ nullptr };
+		std::unique_ptr<GhostState> m_pGhostState{ nullptr };
+		PookaState* m_CurrentState{ nullptr };
 	};
 
 }

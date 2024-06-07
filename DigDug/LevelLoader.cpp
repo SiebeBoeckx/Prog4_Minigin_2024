@@ -6,8 +6,13 @@
 #include <error/en.h>
 
 #include "Wall.h"
+#include <InputManager.h>
+#include "GameCommands.h"
+#include "Displays.h"
+#include "ResourceManager.h"
+#include "Enemies.h"
 
-bool game::LevelCreator::CreateLevel(const std::wstring& filePath, dae::Scene* scene)
+bool game::LevelCreator::CreateLevel(const std::wstring& filePath, dae::Scene* scene, dae::Subject<game::EventType>* sceneStartSubject)
 {
 	std::wstring fileName = filePath;
 	rapidjson::Document jsonFile;
@@ -42,6 +47,7 @@ bool game::LevelCreator::CreateLevel(const std::wstring& filePath, dae::Scene* s
 	const rapidjson::Value& nrRowsVal = jsonFile["nrRows"];
 	const rapidjson::Value& nrColsVal = jsonFile["nrCols"];
 	const rapidjson::Value& levelLayoutVal = jsonFile["levelLayout"];
+	const rapidjson::Value& objectLayoutVal = jsonFile["objectLayout"];
 
 	int tileSize = tileSizeVal.GetInt();
 	int nrRows = nrRowsVal.GetInt();
@@ -49,12 +55,18 @@ bool game::LevelCreator::CreateLevel(const std::wstring& filePath, dae::Scene* s
 
 	GetInstance().m_TileSize = tileSize;
 
-	std::vector<int>levelLayOut;
+	std::vector<int>levelLayout;
+	std::vector<int>objectLayout;
 
 	for (rapidjson::SizeType i = 0; i < levelLayoutVal.Size(); ++i)
 	{
 		// get values in the array
-		levelLayOut.push_back(levelLayoutVal[i].GetInt());
+		levelLayout.push_back(levelLayoutVal[i].GetInt());
+	}
+	for (rapidjson::SizeType i = 0; i < objectLayoutVal.Size(); ++i)
+	{
+		// get values in the array
+		objectLayout.push_back(objectLayoutVal[i].GetInt());
 	}
 
 	// starting position of the grid for the level
@@ -94,17 +106,44 @@ bool game::LevelCreator::CreateLevel(const std::wstring& filePath, dae::Scene* s
 
 			//std::cout << "row = " << j << "\n";
 
-			int input = levelLayOut[i * nrCols + j];
+			int levelInput = levelLayout[i * nrCols + j];
 
-			switch (input)
+			switch (levelInput)
 			{
 			case 0:		
 				break;
+			default:
+				GetInstance().CreateWall(scene, posX, posY, levelInput);
+				break;
+			}
+		}
+
+	}
+
+	for (int i = 0; i < nrRows; ++i)
+	{
+		float posY = startPos.y + (i * tileSize); //* tileSize;
+		//std::cout << "col = " << i << "\n";
+
+		for (int j = 0; j < nrCols; ++j)
+		{
+			float posX = startPos.x + (j * tileSize); //* tileSize;
+
+			//std::cout << "row = " << j << "\n";
+
+			int objectInput = objectLayout[i * nrCols + j];
+
+			switch (objectInput)
+			{
+			case 0:
+				break;
+			case 1:
+				GetInstance().SpawnPlayer1(posX, posY, scene, sceneStartSubject);
+				break;
 			case 2:
-				GetInstance().SpawnPlayer(posX, posY);
+				GetInstance().SpawnPooka(posX, posY, scene);
 				break;
 			default:
-				GetInstance().CreateWall(scene, posX, posY, input);
 				break;
 			}
 		}
@@ -144,11 +183,100 @@ void game::LevelCreator::CreateWall(dae::Scene* scene, float xPos, float yPos, i
 	case 8:
 		wallComp.RemoveSide(game::Directions::Right);
 		break;
+	case 9:
+		wallComp.RemoveSide(game::Directions::Top);
+		wallComp.RemoveSide(game::Directions::Right);
+		wallComp.RemoveSide(game::Directions::Left);
+		break;
 	}
 	scene->Add(std::move(wallObject));
 }
 
-void game::LevelCreator::SpawnPlayer(float xPos, float yPos) const
+void game::LevelCreator::SpawnPlayer1(float xPos, float yPos, dae::Scene* scene, dae::Subject<game::EventType>* sceneStartSubject)
 {
-	m_pPlayer1->SetLocalPosition(xPos, yPos, 0);
+	int controllerIdx = dae::InputManager::GetInstance().AddController();
+	std::unique_ptr<dae::GameObject> player1 = std::make_unique<dae::GameObject>();
+	dae::TextureComponent* texture = &player1->AddComponent<dae::TextureComponent>();
+	texture->SetTexture("Resources/Sprites/Walking0.png");
+	player1->SetLocalPosition(xPos, yPos, 0);
+	game::PlayerComponent* playerComp = &player1->AddComponent<game::PlayerComponent>(m_PlayerIdx);
+	dae::ColliderComponent* colliderComp = &player1->AddComponent<dae::ColliderComponent>("PLAYER");
+	player1->AddComponent<game::MoveableComponent>();
+	colliderComp->SetDimensions(16.f, 16.f);
+	//colliderComp->SetPosition(100, 400);
+
+	auto moveUp = std::make_unique<game::MoveCommand>(player1.get(), glm::vec2{ 0, -1 }, 50.f);
+	auto moveUpSecondary = std::make_unique<game::MoveCommand>(player1.get(), glm::vec2{ 0, -1 }, 50.f);
+	auto moveDown = std::make_unique<game::MoveCommand>(player1.get(), glm::vec2{ 0, 1 }, 50.f);
+	auto moveDownSecondary = std::make_unique<game::MoveCommand>(player1.get(), glm::vec2{ 0, 1 }, 50.f);
+	auto moveRight = std::make_unique<game::MoveCommand>(player1.get(), glm::vec2{ 1, 0 }, 50.f);
+	auto moveRightSecondary = std::make_unique<game::MoveCommand>(player1.get(), glm::vec2{ 1, 0 }, 50.f);
+	auto moveLeft = std::make_unique<game::MoveCommand>(player1.get(), glm::vec2{ -1, 0 }, 50.f);
+	auto moveLeftSecondary = std::make_unique<game::MoveCommand>(player1.get(), glm::vec2{ -1, 0 }, 50.f);
+
+	auto addPoints = std::make_unique<game::PickupItem_Command_P1>(&game::ScoreSystem::GetInstance());
+	auto loseLife = std::make_unique<game::LoseLifeCommand>(player1.get());
+
+	// UP
+	dae::InputManager::GetInstance().AddControllerCommand(dae::XBox360Controller::Button::DPadUp, std::move(moveUp), controllerIdx, dae::InputManager::KeyState::Pressed);
+	dae::InputManager::GetInstance().AddKeyboardCommand(SDL_SCANCODE_W, std::move(moveUpSecondary), dae::InputManager::KeyState::Pressed);
+	// DOWN
+	dae::InputManager::GetInstance().AddControllerCommand(dae::XBox360Controller::Button::DPadDown, std::move(moveDown), controllerIdx, dae::InputManager::KeyState::Pressed);
+	dae::InputManager::GetInstance().AddKeyboardCommand(SDL_SCANCODE_S, std::move(moveDownSecondary), dae::InputManager::KeyState::Pressed);
+	// RIGHT
+	dae::InputManager::GetInstance().AddControllerCommand(dae::XBox360Controller::Button::DPadRight, std::move(moveRight), controllerIdx, dae::InputManager::KeyState::Pressed);
+	dae::InputManager::GetInstance().AddKeyboardCommand(SDL_SCANCODE_D, std::move(moveRightSecondary), dae::InputManager::KeyState::Pressed);
+	// LEFT
+	dae::InputManager::GetInstance().AddControllerCommand(dae::XBox360Controller::Button::DPadLeft, std::move(moveLeft), controllerIdx, dae::InputManager::KeyState::Pressed);
+	dae::InputManager::GetInstance().AddKeyboardCommand(SDL_SCANCODE_A, std::move(moveLeftSecondary), dae::InputManager::KeyState::Pressed);
+
+	// ADD
+	dae::InputManager::GetInstance().AddControllerCommand(dae::XBox360Controller::Button::ButtonY, std::move(addPoints), controllerIdx, dae::InputManager::KeyState::Down);
+	// LOSE LIFE
+	dae::InputManager::GetInstance().AddControllerCommand(dae::XBox360Controller::Button::ButtonX, std::move(loseLife), controllerIdx, dae::InputManager::KeyState::Down);
+
+
+	// LIVES DISPLAY PLAYER 1
+	auto displayFont = dae::ResourceManager::GetInstance().LoadFont("upheavtt.ttf", 14);
+	auto livesDisplayObject = std::make_unique<dae::GameObject>();
+	livesDisplayObject->AddComponent<dae::TextureComponent>();
+	livesDisplayObject->AddComponent<dae::TextComponent>("Empty", std::move(displayFont));
+	livesDisplayObject->AddComponent<LivesDisplayComponent>(playerComp);
+
+	playerComp->AddObserver(livesDisplayObject->GetComponent<LivesDisplayComponent>());
+	sceneStartSubject->AddObserver(livesDisplayObject->GetComponent<LivesDisplayComponent>());
+
+	livesDisplayObject->SetLocalPosition(40, 100);
+	scene->Add(std::move(livesDisplayObject));
+
+	// SCORE DISPLAY PLAYER 1
+	displayFont = dae::ResourceManager::GetInstance().LoadFont("upheavtt.ttf", 14);
+	auto scoreDisplayObject = std::make_unique<dae::GameObject>();
+	scoreDisplayObject->AddComponent<dae::TextureComponent>();
+	scoreDisplayObject->AddComponent<dae::TextComponent>("Empty", std::move(displayFont));
+	scoreDisplayObject->AddComponent<ScoreDisplayComponent>(&game::ScoreSystem::GetInstance(), m_PlayerIdx);
+
+	//playerComp->AddObserver(scoreDisplayObject->GetComponent<ScoreDisplayComponent>());
+	sceneStartSubject->AddObserver(scoreDisplayObject->GetComponent<ScoreDisplayComponent>());
+	game::ScoreSystem::GetInstance().AddObserver_P1(scoreDisplayObject->GetComponent<ScoreDisplayComponent>());
+
+	scoreDisplayObject->SetLocalPosition(40, 120);
+	scene->Add(std::move(scoreDisplayObject));
+
+	scene->Add(std::move(player1));
+	++m_PlayerIdx;
+}
+
+void game::LevelCreator::SpawnPooka(float xPos, float yPos, dae::Scene* scene) const
+{
+	//pooka
+	auto pooka = std::make_unique<dae::GameObject>();
+	dae::TextureComponent* texture = &pooka->AddComponent<dae::TextureComponent>();
+	texture->SetTexture("Resources/Sprites/Pooka0.png");
+	pooka->SetLocalPosition(xPos, yPos);
+	dae::ColliderComponent* colliderComp = &pooka->AddComponent<dae::ColliderComponent>("ENEMY");
+	colliderComp->SetDimensions(16.f, 16.f);
+	&pooka->AddComponent<game::PookaComponent>(16.f);
+
+	scene->Add(std::move(pooka));
 }

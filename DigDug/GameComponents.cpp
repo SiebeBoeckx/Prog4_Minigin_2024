@@ -5,6 +5,7 @@
 #include "LevelLoader.h"
 #include "GameSystems.h"
 #include <iostream>
+#include "ServiceLocator.h"
 
 namespace game
 {
@@ -81,10 +82,23 @@ namespace game
         ,m_pOwner(pOwner)
     {
         m_pOwnerCollider = pOwner->GetComponent<dae::ColliderComponent>();
+        m_pColliders = dae::CollisionManager::GetInstance().GetColliders();
     }
 
     void MoveableComponent::Update(float)
     {
+        const glm::vec2 curPos = m_pOwner->GetWorldPosition();
+
+        if (curPos == m_PrevPos)
+        {
+            dae::ServiceLocator::GetSoundSystem().PauseMusic(false);
+        }
+        else
+        {
+            m_PrevPos = curPos;
+            dae::ServiceLocator::GetSoundSystem().PauseMusic(true);
+        }
+
         if (m_TargetDir == -(m_PrevDir)) //Always allow change direction in horizontal or vertical axis
         {
             m_PrevDir = m_TargetDir;
@@ -93,7 +107,6 @@ namespace game
         }
 
         // Check if the player is at a grid point
-        const glm::vec2 curPos = m_pOwner->GetWorldPosition();
         const int gridSize = LevelCreator::GetInstance().GetTileSize();
 
         const float epsilon = 1.f;
@@ -122,7 +135,7 @@ namespace game
         m_pOwnerCollider->Update(0.f);
         
         for (auto& collision : m_pColliders)
-        {
+        {         
             if (collision->GetInValid())
             {
                 continue;
@@ -137,6 +150,10 @@ namespace game
             {
                 continue;
             }
+            //if (collision->GetTag() == "EDGE")
+            //{
+            //    std::cout << "Edge\n";
+            //}
         
         	if (m_pOwnerCollider->IsColliding(collision))
         	{
@@ -151,6 +168,7 @@ namespace game
         //std::cout << m_pOwner->GetGlobalTransform()->GetPosition().x << ", " << m_pOwner->GetGlobalTransform()->GetPosition().y << ", " << m_pOwner->GetGlobalTransform()->GetPosition().z << '\n';
         m_pOwnerCollider->SetPosition(curPos.x, curPos.y);
         m_pOwner->Translate(m_PrevDir * m_MoveSpeed * dt);
+        //dae::ServiceLocator::GetSoundSystem().PauseMusic(false);
     }
 }
 #pragma endregion

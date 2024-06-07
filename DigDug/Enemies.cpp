@@ -86,7 +86,7 @@ glm::vec2 game::SearchingState::DirectionChecks(float dt, glm::vec2 prevDir)
         }
 
         const glm::vec2 curPos = m_pOwnerCollider->GetLocalPosition();
-        glm::vec2 newPos = curPos + glm::vec2{ newDir * static_cast<float>(gridSize / 4.f) };
+        glm::vec2 newPos = curPos + glm::vec2{ newDir * static_cast<float>(gridSize / 3.f) };
 
         m_pOwnerCollider->SetPosition(newPos.x, newPos.y);
         m_pOwnerCollider->Update(0.f);

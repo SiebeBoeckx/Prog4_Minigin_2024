@@ -4,8 +4,6 @@
 #include "CollisionManager.h"
 #include "Wall.h"
 #include <iostream>
-#include "ServiceLocator.h"
-
 
 using namespace dae;
 

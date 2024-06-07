@@ -43,6 +43,6 @@ namespace game
 		glm::vec2 m_TargetDir{0.f, 0.f}; 
 		std::vector<dae::ColliderComponent*> m_pColliders{};
 		dae::ColliderComponent* m_pOwnerCollider{};
-
+		glm::vec2 m_PrevPos{ 0.f, 0.f };
 	};
 }

@@ -17,6 +17,8 @@ namespace dae
 		SoundSystem& operator=(SoundSystem&&) = delete;
 
 		virtual void PlaySound(const std::string& fileName, int volume, int loops) = 0;
+		virtual void PlayMusic(const std::string& fileName, int volume, int loops) = 0;
+		virtual void PauseMusic(bool val) = 0;
 	};
 
 	class NullSoundSystem final : public SoundSystem
@@ -25,6 +27,8 @@ namespace dae
 		NullSoundSystem() = default;
 
 		void PlaySound(const std::string&, int, int) override;
+		void PlayMusic(const std::string& fileName, int volume, int loops) override;
+		void PauseMusic(bool val) override;
 	};
 
 	class SDLSoundSystem final : public SoundSystem
@@ -39,6 +43,8 @@ namespace dae
 
 
 		void PlaySound(const std::string& fileName, int volume, int loops) override;
+		void PlayMusic(const std::string& fileName, int volume, int loops) override;
+		void PauseMusic(bool val) override;
 
 	private:
 		enum class SoundType

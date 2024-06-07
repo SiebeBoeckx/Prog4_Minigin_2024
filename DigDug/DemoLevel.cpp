@@ -5,11 +5,12 @@
 #include "Displays.h"
 #include "LevelLoader.h"
 #include "Wall.h"
+#include <ServiceLocator.h>
 
 DemoLevel::DemoLevel(dae::Scene* pScene)
 {
 	std::unique_ptr<dae::Subject<game::EventType>> sceneStartSubject = std::make_unique<dae::Subject<game::EventType>>();
-
+	dae::ServiceLocator::GetSoundSystem().PlayMusic("../Data/Resources/Sounds/WalkTheme.mp3", 10, 10000);
 
 	auto fpsFont = dae::ResourceManager::GetInstance().LoadFont("upheavtt.ttf", 18);
 	auto fpsObject = std::make_unique<dae::GameObject>();

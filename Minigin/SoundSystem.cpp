@@ -11,6 +11,14 @@ namespace dae
     {
         std::cout << "Calling PlaySound on a NullSoundSystem\n";
     }
+    void NullSoundSystem::PlayMusic(const std::string&, int, int)
+    {
+        std::cout << "Calling PlayMusic on a NullSoundSystem\n";
+    }
+    void NullSoundSystem::PauseMusic(bool)
+    {
+        std::cout << "Calling PauseMusic on a NullSoundSystem\n";
+    }
 #pragma region SDL Sound System
     class SDLSoundSystem::SDL_MixerImpl final
     {
@@ -58,6 +66,44 @@ namespace dae
             Mix_PlayChannel(1, m_SoundsMap[fileName], loops);
         }
 
+        void PlayMusic(const std::string& fileName, int volume, int loops)
+        {
+            {
+                std::unique_lock lock(m_MapMutex);
+                // Load music if not loaded already
+                if (!m_MusicMap.contains(fileName))
+                {
+                    // Error, cannot load music
+                    if (!LoadMusic(fileName))
+                    {
+                        return;
+                    }
+                }
+            }
+            // Volume == percent
+            volume = (MIX_MAX_VOLUME * volume) / 100;
+
+            // If not playing anything, play this
+            if (Mix_PlayingMusic() == 0)
+            {
+                Mix_VolumeMusic(volume);
+                Mix_PlayMusic(m_MusicMap[fileName], loops);
+            }
+        }
+
+        void PauseMusic(bool val)
+        {        
+            if (val)
+            {
+                Mix_ResumeMusic();
+            }
+            else
+            {
+                Mix_PauseMusic();
+            }
+            
+        }
+
     private:
         bool LoadSound(const std::string& fileName)
         {
@@ -71,7 +117,20 @@ namespace dae
             return true;
         }
 
+        bool LoadMusic(const std::string& fileName)
+        {
+            Mix_Music* m = Mix_LoadMUS(fileName.c_str());
+            if (m == nullptr)
+            {
+                printf("Failed to load music. SDL_Mixer error: %s\n", Mix_GetError());
+                return false;
+            }
+            m_MusicMap.insert(std::make_pair(fileName, m));
+            return true;
+        }
+
         std::map<std::string, Mix_Chunk*> m_SoundsMap;
+        std::map<std::string, Mix_Music*> m_MusicMap;
         std::mutex m_MapMutex;
     };
 
@@ -101,6 +160,21 @@ namespace dae
         m_ConditionVariable.notify_all();
     }
 
+    void SDLSoundSystem::PlayMusic(const std::string& fileName, int volume, int loops)
+    {
+        {
+            std::lock_guard lock(m_QueueMutex);
+            m_EventQueue.push({ SoundType::Music, fileName, volume, loops });
+            //make sure the lock gets unlocked before notifying
+        }
+        m_ConditionVariable.notify_all();
+    }
+
+    void SDLSoundSystem::PauseMusic(bool val)
+    {
+        m_pSDL_MixerImpl->PauseMusic(val);
+    }
+
     void SDLSoundSystem::SoundLoaderThread()
     {
         while (true)
@@ -125,6 +199,10 @@ namespace dae
             if (event.type == SoundType::Sound)
             {
                 m_pSDL_MixerImpl->PlaySound(event.fileName, event.volume, event.loops);
+            }
+            if (event.type == SoundType::Music)
+            {
+                m_pSDL_MixerImpl->PlayMusic(event.fileName, event.volume, event.loops);
             }
         }
     }

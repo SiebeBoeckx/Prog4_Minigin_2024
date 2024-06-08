@@ -1,6 +1,9 @@
 #include "GameSystems.h"
 #include "ServiceLocator.h"
 #include "Scene.h"
+#include <fstream>
+#include <iostream>
+#include <string>
 
 namespace game
 {
@@ -93,12 +96,74 @@ namespace game
 		{
 		case EventType::GAME_WIN:
 			m_pScene->TogglePauseScene(true);
+			GetInstance().SetHighScore(ScoreSystem::GetInstance().GetScore_P1());
+			GetInstance().SetHighScore(ScoreSystem::GetInstance().GetScore_P2());
 			break;
 		case EventType::GAME_OVER:
 			m_pScene->TogglePauseScene(true);
+			GetInstance().SetHighScore(ScoreSystem::GetInstance().GetScore_P1());
+			GetInstance().SetHighScore(ScoreSystem::GetInstance().GetScore_P2());
 			break;
 		default:
 			break;
+		}
+	}
+	void SceneSystem::SetHighScore(int highScore)
+	{
+		m_HighScores.push_back(highScore);
+		std::sort(m_HighScores.begin(), m_HighScores.end(), std::greater<int>());
+		if (m_HighScores.size() > 10)
+		{
+			m_HighScores.resize(10); // Keep only the top 10 scores
+		}
+		WriteToHighScore();
+	}
+	void SceneSystem::WriteToHighScore()
+	{
+		std::ofstream highScoreFile("../Data/highscores.txt");
+		if (highScoreFile.is_open())
+		{
+			for (const int score : m_HighScores)
+			{
+				highScoreFile << score << std::endl;
+			}
+			highScoreFile.close();
+		}
+		else
+		{
+			std::cerr << "Error: Unable to open highscores.txt file for writing.\n";
+		}
+	}
+	void SceneSystem::ReadHighScore()
+	{
+		std::ifstream highScoreFile("../Data/highscores.txt");
+		if (highScoreFile.is_open())
+		{
+			std::string line;
+			while (std::getline(highScoreFile, line))
+			{				
+				int score = std::stoi(line);
+				m_HighScores.push_back(score);				
+			}
+			highScoreFile.close();
+			std::sort(m_HighScores.begin(), m_HighScores.end(), std::greater<int>());
+			if (m_HighScores.size() > 10)
+			{
+				m_HighScores.resize(10); // Keep only the top 10 scores
+			}
+		}
+		else
+		{
+			std::cerr << "highscores.txt file not found. Creating a new file.\n";
+			std::ofstream newHighScoreFile("../Data/highscores.txt");
+			if (newHighScoreFile.is_open())
+			{
+				newHighScoreFile.close();
+			}
+			else
+			{
+				std::cerr << "Error: Unable to create highscores.txt file.\n";
+			}
 		}
 	}
 }

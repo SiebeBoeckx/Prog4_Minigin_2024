@@ -44,13 +44,27 @@ namespace game
 		void HandleEvent(game::EventType event) override;
 		void SetScene(dae::Scene* pScene) { m_pScene = pScene; };
 		const dae::Scene* GetScene() const { return m_pScene; };
+		const int GetHighScore() const
+		{ 
+			if (!m_HighScores.empty())
+			{
+				return m_HighScores.front();
+			}
+			return 0;
+		};
+		void SetHighScore(int highScore);
 	private:
 		friend class Singleton<SceneSystem>;
 		SceneSystem()
 		{
-		}
+			ReadHighScore();
+		};
+
+		void WriteToHighScore();
+		void ReadHighScore();
 
 		dae::Scene* m_pScene{ nullptr };
+		std::vector<int> m_HighScores{};
 	};
 
 }

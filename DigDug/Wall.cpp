@@ -104,7 +104,7 @@ void game::WallComponent::RemoveSide(Directions direction)
 
 void game::WallComponent::DigWalls(const dae::ColliderComponent* playerCollider)
 {
-	for (int i{}; i < m_Colliders.size(); ++i)
+	for (size_t i{}; i < m_Colliders.size(); ++i)
 	{
 		if (!m_Colliders[i]->IsColliding(playerCollider))
 		{

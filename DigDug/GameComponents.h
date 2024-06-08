@@ -82,4 +82,17 @@ namespace game
 
 		void ResetHook();
 	};
+
+	class HighScoreComponent final : public dae::Component
+	{
+	public:
+		HighScoreComponent(dae::GameObject* pOwner);
+
+		void Update(float) override;
+		const int GetHighScore() const { return m_HighScore; };
+
+	private:
+		int m_HighScore{ 0 };
+		dae::TextComponent* m_pOwnerText{ nullptr };
+	};
 }

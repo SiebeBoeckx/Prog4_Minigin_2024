@@ -20,22 +20,37 @@ DemoLevel::DemoLevel(dae::Scene* pScene)
 	fpsObject->SetLocalPosition(40, 10);
 	pScene->Add(std::move(fpsObject));
 
+	auto highScoreFont = dae::ResourceManager::GetInstance().LoadFont("upheavtt.ttf", 25);
+	auto highScoreObject = std::make_unique<dae::GameObject>();
+	highScoreObject->AddComponent<dae::TextureComponent>();
+	highScoreObject->AddComponent<dae::TextComponent>("Empty", std::move(highScoreFont));
+	highScoreObject->AddComponent<game::HighScoreComponent>();
+	highScoreObject->SetLocalPosition(500, 10);
+	pScene->Add(std::move(highScoreObject));
+
 	//===============================================================================================================
 	//2 PLAYERS (1 KEYBOARD, 1 CONTROLLER)
 	//===============================================================================================================
 	auto font = dae::ResourceManager::GetInstance().LoadFont("upheavtt.ttf", 14);
 	auto player1ControlsText = std::make_unique<dae::GameObject>();
 	player1ControlsText->AddComponent<dae::TextureComponent>();
-	player1ControlsText->AddComponent<dae::TextComponent>("Use D-Pad to move Dig-Dug, Y to add points, X to lose lives", std::move(font));
-	player1ControlsText->SetLocalPosition(220, 60);
+	player1ControlsText->AddComponent<dae::TextComponent>("Use D-Pad or WASD to move Dig-Dug", std::move(font));
+	player1ControlsText->SetLocalPosition(100, 30);
 	pScene->Add(std::move(player1ControlsText));
 
 	font = dae::ResourceManager::GetInstance().LoadFont("upheavtt.ttf", 14);
-	auto player2ControlsText = std::make_unique<dae::GameObject>();
-	player2ControlsText->AddComponent<dae::TextureComponent>();
-	player2ControlsText->AddComponent<dae::TextComponent>("Use WASD to move Pooka, P to add points, L to lose lives", std::move(font));
-	player2ControlsText->SetLocalPosition(208, 80);
-	pScene->Add(std::move(player2ControlsText));
+	auto player1ControlsText2 = std::make_unique<dae::GameObject>();
+	player1ControlsText2->AddComponent<dae::TextureComponent>();
+	player1ControlsText2->AddComponent<dae::TextComponent>("Use A or SPACE to pump", std::move(font));
+	player1ControlsText2->SetLocalPosition(86, 45);
+	pScene->Add(std::move(player1ControlsText2));
+
+	//font = dae::ResourceManager::GetInstance().LoadFont("upheavtt.ttf", 14);
+	//auto player2ControlsText = std::make_unique<dae::GameObject>();
+	//player2ControlsText->AddComponent<dae::TextureComponent>();
+	//player2ControlsText->AddComponent<dae::TextComponent>("Use WASD to move Pooka, P to add points, L to lose lives", std::move(font));
+	//player2ControlsText->SetLocalPosition(208, 80);
+	//pScene->Add(std::move(player2ControlsText));
 
 	//TEST WALL
 	//auto wallObject = std::make_unique<dae::GameObject>();

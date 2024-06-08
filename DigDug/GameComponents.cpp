@@ -7,6 +7,7 @@
 #include <iostream>
 #include "ServiceLocator.h"
 #include "Enemies.h"
+#include <format>
 
 namespace game
 {
@@ -311,5 +312,22 @@ namespace game
         m_CurrentOffset = 0;
         return;
     }
-}
 #pragma endregion
+#pragma region HighScore Comp
+    HighScoreComponent::HighScoreComponent(dae::GameObject* pOwner)
+        :dae::Component(pOwner)
+    {
+        m_HighScore = game::SceneSystem::GetInstance().GetHighScore();
+    };
+    void HighScoreComponent::Update(float)
+    {
+        if (m_pOwnerText == nullptr) //Check if the text pointer is set
+        {
+            m_pOwnerText = GetOwner()->GetComponent<dae::TextComponent>(); //This will only happen the first time
+        }
+
+        std::string printString = std::format("HIGHSCORE: {}", m_HighScore);
+        m_pOwnerText->SetText(printString);
+    }
+#pragma endregion
+}

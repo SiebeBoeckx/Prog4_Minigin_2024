@@ -34,10 +34,11 @@ namespace game
 		virtual PookaState* Update(float dt) override;
 		virtual void OnEnter() override;
 		virtual void OnExit() override {};
+
+		void SetDir(glm::vec2 dir) { m_Dir = dir; };
 	private:
 		glm::vec2 m_Dir{1.f, 0.f};
-		float m_MoveSpeed{ 60.f };
-		glm::vec2 m_ClosestPlayerPos{ 0.f, 0.f };
+		float m_MoveSpeed{ 55.f };
 		const float m_MaxSearchTime{ 10.f };
 		float m_CurrentSeachTime{ 0.f };
 		std::vector<dae::ColliderComponent*> m_pColliders{};
@@ -52,9 +53,25 @@ namespace game
 		GhostState(PookaComponent* pPooka);
 		~GhostState() = default;
 
-		virtual PookaState* Update(float) override;
+		virtual PookaState* Update(float dt) override;
 		virtual void OnEnter() override;
 		virtual void OnExit() override {};
+
+	private:
+		enum class Axis
+		{
+			X,
+			Y
+		};
+
+		float m_MoveSpeed{ 20.f };
+		bool m_StartedGhosting{ false };
+		std::vector<dae::ColliderComponent*> m_pColliders{};
+		dae::ColliderComponent* m_pOwnerCollider{};
+		std::vector<dae::GameObject*> m_pPlayers{};
+
+		glm::vec2 FindClosestPlayerPos();
+		bool CheckClearInAxis(Axis axis);
 	};
 
 	class PookaComponent : public dae::Component
@@ -70,8 +87,8 @@ namespace game
 		
 		virtual void Update(float dt) override;
 
-		PookaState* GetPookaSearchState() const { return m_pSearchState.get(); };
-		PookaState* GetPookaGhostState() const { return m_pGhostState.get(); };
+		SearchingState* GetPookaSearchState() const { return m_pSearchState.get(); };
+		GhostState* GetPookaGhostState() const { return m_pGhostState.get(); };
 		dae::ColliderComponent* GetCollider() const { return m_pCollider; };
 	private:
 		dae::ColliderComponent* m_pCollider{ nullptr };

@@ -10,7 +10,7 @@ game::WallComponent::WallComponent(dae::GameObject* pOwner, float size)
 {
 	for (int i{0}; i < 4; ++i)
 	{
-		const float wallThickness{ 1.f };
+		const float wallThickness{ 3.f };
 		m_IsOpenBools.push_back(false);
 		dae::ColliderComponent* newCollider = &pOwner->AddComponent<dae::ColliderComponent>("WALL");
 		switch (i)

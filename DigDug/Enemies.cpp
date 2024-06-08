@@ -47,9 +47,6 @@ game::PookaState* game::SearchingState::Update(float dt)
     m_Dir = DirectionChecks(dt, m_Dir);
     //Pump check
     const glm::vec2 curPos = m_pOwnerCollider->GetLocalPosition();
-    const glm::vec2 newPos = curPos + glm::vec2{ m_Dir * m_MoveSpeed * dt };
-
-    m_pOwnerCollider->SetPosition(newPos.x, newPos.y);
     m_pOwnerCollider->Update(0.f);
 
     for (auto& collision : m_pColliders)
@@ -66,19 +63,15 @@ game::PookaState* game::SearchingState::Update(float dt)
         if (collision->GetTag() == "PUMP")
         {
             //Want to check current pos not future
-            m_pOwnerCollider->SetPosition(curPos.x, curPos.y);
-            m_pOwnerCollider->Update(0.f);
             //std::cout << "Checking pump\n";
             if (m_pOwnerCollider->IsColliding(collision))
             {
                 if (collision->GetOwner()->GetComponent<game::PumpComponent>()->GetIsActive())
                 {
-                    std::cout << "Hit by pump\n";
+                    //std::cout << "Hit by pump\n";
 	                return m_pPooka->GetPookaStunnedState();
                 }
             }
-            m_pOwnerCollider->SetPosition(newPos.x, newPos.y);
-            m_pOwnerCollider->Update(0.f);
         }
     }
     m_pOwnerCollider->SetPosition(curPos.x, curPos.y);
@@ -171,6 +164,10 @@ glm::vec2 game::SearchingState::DirectionChecks(float dt, glm::vec2 prevDir)
             }
             if (collision->GetTag() == "PUMP")
             {
+                if (collision->GetOwner()->GetComponent<game::PumpComponent>()->GetIsActive())
+                {
+                    break;
+                }
                 continue;
             }
             if (m_pOwnerCollider->IsColliding(collision))
@@ -311,6 +308,7 @@ game::PookaState* game::GhostState::Update(float dt)
                     return m_pPooka->GetPookaStunnedState();
                 }
             }
+            continue;
         }
         if (m_pOwnerCollider->IsColliding(collision))
         {
@@ -517,8 +515,8 @@ void game::StunnedState::AddStretchAmount(float amount)
 
 void game::StunnedState::RemoveStretch(float dt)
 {
-    //Remove at a rate of 10 air per second, aka 10 sec to fully deflate
-    m_AirAmount -= 10.f * dt;
+    //Remove at a rate of 20 air per second, aka 5 sec to fully deflate
+    m_AirAmount -= 20.f * dt;
 }
 
 

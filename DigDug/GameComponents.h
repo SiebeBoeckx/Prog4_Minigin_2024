@@ -56,7 +56,7 @@ namespace game
 		void Hold();
 
 		void SetRange(float range) { m_Range = range; };
-		bool GetIsActive() const { return m_IsActive != m_IsHooked; }; //XOR
+		bool GetIsActive() const { return m_IsActive; }; //XOR
 	private:
 		dae::GameObject* m_pOwner{ nullptr }; //Store again here instead of in Comp so i can access non-const functions
 		std::vector<dae::ColliderComponent*> m_pColliders{};
@@ -72,6 +72,8 @@ namespace game
 		float m_TimeHooked{ 0.f };
 		const float m_MaxTimeHooked{ 0.5f };
 		dae::GameObject* m_pHookedEnemy{ nullptr };
+
+		bool m_FirstUpdate{ true };
 
 		void ResetHook();
 	};

@@ -585,7 +585,7 @@ namespace dae
 
     void ColliderComponent::Update(float)
     {
-        const auto myPosition = m_pOwnerGlobalTransform->GetPosition();
+        const auto myPosition = GetOwner()->GetWorldPosition();
 
         m_ColliderBox.xMin = myPosition.x + m_LocalPos.x;
         m_ColliderBox.yMin = myPosition.y + m_LocalPos.y;   

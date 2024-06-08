@@ -188,6 +188,11 @@ namespace game
     }
     void PumpComponent::Update(float dt)
     {
+        if (m_FirstUpdate) //Some enemies get added after player, this means the stored colliders aren't updated
+        {   
+            m_pColliders = dae::CollisionManager::GetInstance().GetColliders();   
+        }
+
         if (!m_IsActive && !m_IsHooked)
         {
             return; 
@@ -222,9 +227,10 @@ namespace game
             m_pColliders = dae::CollisionManager::GetInstance().GetColliders();
         }
 
-        //std::cout   << m_pOwnerCollider->GetGlobalPosition().x << ", "
+        //std::cout << m_pOwnerCollider->GetGlobalPosition().x << "\n ";
         //            << m_pOwnerCollider->GetGlobalPosition().y << ", "
         //            << m_pOwnerCollider->GetGlobalPosition().z << "\n";
+        m_pOwnerCollider->Update(0.f);
 
         for (auto& collision : m_pColliders)
         {

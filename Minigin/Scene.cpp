@@ -31,6 +31,10 @@ void Scene::Update(float dt)
 {
 	for(auto& object : m_objects)
 	{
+		if (object == nullptr)
+		{
+			continue;
+		}
 		object->Update(dt);
 	}
 }
@@ -39,14 +43,24 @@ void dae::Scene::PhysicsUpdate(float dt)
 {
 	for (auto& object : m_objects)
 	{
+		if (object == nullptr)
+		{
+			continue;
+		}
 		object->PhysicsUpdate(dt);
 	}
+
+	DeletionUpdate();
 }
 
 void Scene::Render() const
 {
 	for (const auto& object : m_objects)
 	{
+		if (object == nullptr)
+		{
+			continue;
+		}
 		object->Render();
 	}
 }
@@ -55,7 +69,26 @@ void dae::Scene::RenderUI() const
 {
 	for (const auto& object : m_objects)
 	{
+		if (object == nullptr)
+		{
+			continue;
+		}
 		object->RenderUI();
+	}
+}
+
+void dae::Scene::DeletionUpdate()
+{
+	for (auto& object : m_objects)
+	{
+		if (object == nullptr)
+		{
+			continue;
+		}
+		if (object->GetMarkObjectForDelete())
+		{
+			Remove(std::move(object));
+		}
 	}
 }
 

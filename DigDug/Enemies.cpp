@@ -4,6 +4,7 @@
 #include <random>
 #include "LevelLoader.h"
 #include "GameCommands.h"
+#include <iostream>
 
 // Define the static members
 //game::SearchingState game::PookaState::m_Searching(nullptr);
@@ -44,6 +45,43 @@ game::PookaState* game::SearchingState::Update(float dt)
 	}
 
     m_Dir = DirectionChecks(dt, m_Dir);
+    //Pump check
+    const glm::vec2 curPos = m_pOwnerCollider->GetLocalPosition();
+    const glm::vec2 newPos = curPos + glm::vec2{ m_Dir * m_MoveSpeed * dt };
+
+    m_pOwnerCollider->SetPosition(newPos.x, newPos.y);
+    m_pOwnerCollider->Update(0.f);
+
+    for (auto& collision : m_pColliders)
+    {
+        if (collision->GetInValid())
+        {
+            continue;
+        }
+        // Skipping same collision
+        if (collision == m_pOwnerCollider)
+        {
+            continue;
+        }
+        if (collision->GetTag() == "PUMP")
+        {
+            //Want to check current pos not future
+            m_pOwnerCollider->SetPosition(curPos.x, curPos.y);
+            m_pOwnerCollider->Update(0.f);
+            //std::cout << "Checking pump\n";
+            if (m_pOwnerCollider->IsColliding(collision))
+            {
+                if (collision->GetOwner()->GetComponent<game::PumpComponent>()->GetIsActive())
+                {
+                    std::cout << "Hit by pump\n";
+	                return m_pPooka->GetPookaStunnedState();
+                }
+            }
+            m_pOwnerCollider->SetPosition(newPos.x, newPos.y);
+            m_pOwnerCollider->Update(0.f);
+        }
+    }
+    m_pOwnerCollider->SetPosition(curPos.x, curPos.y);
     m_pPooka->GetOwner()->Translate(m_Dir * m_MoveSpeed * dt);
 	return m_pPooka->GetPookaSearchState();
 }
@@ -129,6 +167,10 @@ glm::vec2 game::SearchingState::DirectionChecks(float dt, glm::vec2 prevDir)
                     loseLife->Execute(0.f);
                     m_pPooka->Reset();
                 }
+                continue;
+            }
+            if (collision->GetTag() == "PUMP")
+            {
                 continue;
             }
             if (m_pOwnerCollider->IsColliding(collision))
@@ -256,6 +298,19 @@ game::PookaState* game::GhostState::Update(float dt)
                 return m_pPooka->GetPookaSearchState();
             }
             continue;
+        }
+        if (collision->GetTag() == "PUMP")
+        {
+            //std::cout << "Checking pump\n";
+            if (m_pOwnerCollider->IsColliding(collision))
+            {
+                if (collision->GetOwner()->GetComponent<game::PumpComponent>()->GetIsActive())
+                {
+                    //std::cout << "Hit by pump\n";
+                    m_pOwnerCollider->SetPosition(curPos.x, curPos.y);
+                    return m_pPooka->GetPookaStunnedState();
+                }
+            }
         }
         if (m_pOwnerCollider->IsColliding(collision))
         {
@@ -413,8 +468,59 @@ game::PookaComponent::PookaComponent(dae::GameObject* pOwner)
 {
     m_pSearchState = std::make_unique<SearchingState>(this);
     m_pGhostState = std::make_unique<GhostState>(this);
+    m_pStunnedState = std::make_unique<StunnedState>(this);
     m_CurrentState = m_pSearchState.get();
 }
+
+game::StunnedState::StunnedState(PookaComponent* pPooka)
+    :PookaState(pPooka)
+{
+}
+
+game::PookaState* game::StunnedState::Update(float dt)
+{
+    m_TimeSinceLastAdd += dt;
+    if (m_TimeSinceLastAdd >= m_MaxTimeSinceLastAdd)
+    {
+        //Deflate after a while
+        RemoveStretch(dt);
+        if (m_AirAmount <= 0.f)
+        {
+            //Return to state before getting stretched
+            if (m_pPooka->GetPreviousState() == m_pPooka->GetPookaSearchState())
+            {
+                return m_pPooka->GetPookaSearchState();
+            }
+            return m_pPooka->GetPookaGhostState();
+        }
+        return m_pPooka->GetPookaStunnedState();
+    }
+    if (m_AirAmount >= m_MaxAirAmount)
+    {
+        m_pPooka->GetOwner()->MarkObjectForDelete();
+    }
+    return m_pPooka->GetPookaStunnedState();
+}
+
+void game::StunnedState::OnEnter()
+{
+    m_AirAmount = 0.f;
+    m_TimeSinceLastAdd = 0.f;
+}
+
+void game::StunnedState::AddStretchAmount(float amount)
+{
+    m_TimeSinceLastAdd = 0.f;
+    m_AirAmount += amount;
+    std::cout << m_AirAmount << '\n';
+}
+
+void game::StunnedState::RemoveStretch(float dt)
+{
+    //Remove at a rate of 10 air per second, aka 10 sec to fully deflate
+    m_AirAmount -= 10.f * dt;
+}
+
 
 void game::PookaComponent::Update(float dt)
 {
@@ -423,8 +529,9 @@ void game::PookaComponent::Update(float dt)
     if (newState != m_CurrentState)
     {
         m_CurrentState->OnExit();
-        newState->OnEnter();
+        m_PreviousState = m_CurrentState;
         m_CurrentState = newState;
+        m_CurrentState->OnEnter();
     }
 }
 
@@ -434,4 +541,16 @@ void game::PookaComponent::Reset()
     m_CurrentState = GetPookaSearchState();
     m_CurrentState->OnEnter();
     EnemyComponent::Reset();
+}
+
+void game::PookaComponent::AddAir(float amount)
+{
+    if (m_CurrentState != GetPookaStunnedState())
+    {
+        m_CurrentState->OnExit();
+        m_PreviousState = m_CurrentState;
+        m_CurrentState = GetPookaStunnedState();
+        m_CurrentState->OnEnter();
+    }
+    GetPookaStunnedState()->AddStretchAmount(amount);
 }

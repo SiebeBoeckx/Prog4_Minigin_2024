@@ -18,6 +18,7 @@ namespace dae
 		void Render() const;
 		void RenderUI() const;
 
+
 		explicit Scene(const std::string& name);
 		~Scene();
 		Scene(const Scene& other) = delete;
@@ -31,6 +32,7 @@ namespace dae
 		std::vector <std::unique_ptr<GameObject>> m_objects{};
 
 		static unsigned int m_idCounter; 
+		void DeletionUpdate();
 	};
 
 }

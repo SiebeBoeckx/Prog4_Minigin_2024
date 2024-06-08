@@ -62,4 +62,28 @@ namespace game
 			}
 		}
 	}
+	FireCommand::FireCommand(dae::GameObject* pOwner, game::MoveableComponent* pPlayerMover)
+		:Command()
+		,m_pOwner(pOwner)
+		,m_pPlayerMoveableComp(pPlayerMover)
+	{
+		m_pPumpComponent = pOwner->GetComponent<game::PumpComponent>();
+	}
+	void FireCommand::Execute(float)
+	{
+		m_pPumpComponent->Fire(m_pPlayerMoveableComp->GetPrevDir());
+	}
+
+	HoldCommand::HoldCommand(dae::GameObject* pOwner, game::MoveableComponent* pPlayerMover)
+		:Command()
+		, m_pOwner(pOwner)
+		, m_pPlayerMoveableComp(pPlayerMover)
+	{
+		m_pPumpComponent = pOwner->GetComponent<game::PumpComponent>();
+	}
+
+	void HoldCommand::Execute(float)
+	{
+		m_pPumpComponent->Hold();
+	}
 }

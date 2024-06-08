@@ -28,6 +28,8 @@ namespace dae
 		const Transform* GetGlobalTransform() const { return &m_globalTransform; };
 
 		void MarkComponentForDelete(Component& component);
+		void MarkObjectForDelete() { m_MarkForDelete = true; };
+		bool GetMarkObjectForDelete() const { return m_MarkForDelete; };
 
 		GameObject() = default;
 		~GameObject();
@@ -100,6 +102,8 @@ namespace dae
 		bool m_positionIsDirty{ true };
 		GameObject* m_pParent{ nullptr };
 		std::vector<GameObject*> m_pChildren{};
+
+		bool m_MarkForDelete{ false };
 
 		void DeletionUpdate();
 		void AddChild(GameObject* child);

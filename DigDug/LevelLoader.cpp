@@ -194,29 +194,30 @@ void game::LevelCreator::CreateWall(dae::Scene* scene, float xPos, float yPos, i
 
 void game::LevelCreator::SpawnPlayer1(float xPos, float yPos, dae::Scene* scene, dae::Subject<game::EventType>* sceneStartSubject)
 {
+	const float size{ 16.f };
 	int controllerIdx = dae::InputManager::GetInstance().AddController();
-	std::unique_ptr<dae::GameObject> player1 = std::make_unique<dae::GameObject>();
-	dae::TextureComponent* texture = &player1->AddComponent<dae::TextureComponent>();
+	std::unique_ptr<dae::GameObject> player = std::make_unique<dae::GameObject>();
+	dae::TextureComponent* texture = &player->AddComponent<dae::TextureComponent>();
 	texture->SetTexture("Resources/Sprites/Walking0.png");
-	player1->SetLocalPosition(xPos, yPos, 0);
-	game::PlayerComponent* playerComp = &player1->AddComponent<game::PlayerComponent>(m_PlayerIdx);
+	player->SetLocalPosition(xPos, yPos, 0);
+	game::PlayerComponent* playerComp = &player->AddComponent<game::PlayerComponent>(m_PlayerIdx);
 	playerComp->SetStartPos({ xPos, yPos });
-	dae::ColliderComponent* colliderComp = &player1->AddComponent<dae::ColliderComponent>("PLAYER");
-	player1->AddComponent<game::MoveableComponent>();
-	colliderComp->SetDimensions(16.f, 16.f);
+	dae::ColliderComponent* colliderComp = &player->AddComponent<dae::ColliderComponent>("PLAYER");
+	colliderComp->SetDimensions(size, size);
+	game::MoveableComponent* playerMoveComp = &player->AddComponent<game::MoveableComponent>();
 	//colliderComp->SetPosition(100, 400);
 
-	auto moveUp = std::make_unique<game::MoveCommand>(player1.get(), glm::vec2{ 0, -1 }, 50.f);
-	auto moveUpSecondary = std::make_unique<game::MoveCommand>(player1.get(), glm::vec2{ 0, -1 }, 50.f);
-	auto moveDown = std::make_unique<game::MoveCommand>(player1.get(), glm::vec2{ 0, 1 }, 50.f);
-	auto moveDownSecondary = std::make_unique<game::MoveCommand>(player1.get(), glm::vec2{ 0, 1 }, 50.f);
-	auto moveRight = std::make_unique<game::MoveCommand>(player1.get(), glm::vec2{ 1, 0 }, 50.f);
-	auto moveRightSecondary = std::make_unique<game::MoveCommand>(player1.get(), glm::vec2{ 1, 0 }, 50.f);
-	auto moveLeft = std::make_unique<game::MoveCommand>(player1.get(), glm::vec2{ -1, 0 }, 50.f);
-	auto moveLeftSecondary = std::make_unique<game::MoveCommand>(player1.get(), glm::vec2{ -1, 0 }, 50.f);
+	auto moveUp = std::make_unique<game::MoveCommand>(player.get(), glm::vec2{ 0, -1 }, 50.f);
+	auto moveUpSecondary = std::make_unique<game::MoveCommand>(player.get(), glm::vec2{ 0, -1 }, 50.f);
+	auto moveDown = std::make_unique<game::MoveCommand>(player.get(), glm::vec2{ 0, 1 }, 50.f);
+	auto moveDownSecondary = std::make_unique<game::MoveCommand>(player.get(), glm::vec2{ 0, 1 }, 50.f);
+	auto moveRight = std::make_unique<game::MoveCommand>(player.get(), glm::vec2{ 1, 0 }, 50.f);
+	auto moveRightSecondary = std::make_unique<game::MoveCommand>(player.get(), glm::vec2{ 1, 0 }, 50.f);
+	auto moveLeft = std::make_unique<game::MoveCommand>(player.get(), glm::vec2{ -1, 0 }, 50.f);
+	auto moveLeftSecondary = std::make_unique<game::MoveCommand>(player.get(), glm::vec2{ -1, 0 }, 50.f);
 
 	auto addPoints = std::make_unique<game::PickupItem_Command_P1>(&game::ScoreSystem::GetInstance());
-	auto loseLife = std::make_unique<game::LoseLifeCommand>(player1.get());
+	auto loseLife = std::make_unique<game::LoseLifeCommand>(player.get());
 
 	// UP
 	dae::InputManager::GetInstance().AddControllerCommand(dae::XBox360Controller::Button::DPadUp, std::move(moveUp), controllerIdx, dae::InputManager::KeyState::Pressed);
@@ -232,9 +233,9 @@ void game::LevelCreator::SpawnPlayer1(float xPos, float yPos, dae::Scene* scene,
 	dae::InputManager::GetInstance().AddKeyboardCommand(SDL_SCANCODE_A, std::move(moveLeftSecondary), dae::InputManager::KeyState::Pressed);
 
 	// ADD
-	dae::InputManager::GetInstance().AddControllerCommand(dae::XBox360Controller::Button::ButtonY, std::move(addPoints), controllerIdx, dae::InputManager::KeyState::Down);
+	//dae::InputManager::GetInstance().AddControllerCommand(dae::XBox360Controller::Button::ButtonY, std::move(addPoints), controllerIdx, dae::InputManager::KeyState::Down);
 	// LOSE LIFE
-	dae::InputManager::GetInstance().AddControllerCommand(dae::XBox360Controller::Button::ButtonX, std::move(loseLife), controllerIdx, dae::InputManager::KeyState::Down);
+	//dae::InputManager::GetInstance().AddControllerCommand(dae::XBox360Controller::Button::ButtonX, std::move(loseLife), controllerIdx, dae::InputManager::KeyState::Down);
 
 
 	// LIVES DISPLAY PLAYER 1
@@ -264,7 +265,32 @@ void game::LevelCreator::SpawnPlayer1(float xPos, float yPos, dae::Scene* scene,
 	scoreDisplayObject->SetLocalPosition(40, 120);
 	scene->Add(std::move(scoreDisplayObject));
 
-	scene->Add(std::move(player1));
+	//PUMP
+	std::unique_ptr<dae::GameObject> pump = std::make_unique<dae::GameObject>();
+	texture = &pump->AddComponent<dae::TextureComponent>();
+	texture->SetTexture("Resources/Sprites/EmptyPump.png");
+	colliderComp = &pump->AddComponent<dae::ColliderComponent>("PUMP");
+	const glm::vec2 textureSize{ texture->GetTexturePtr()->GetSize() };
+	colliderComp->SetDimensions(textureSize.x, textureSize.y);
+	game::PumpComponent* pumpComp = &pump->AddComponent<game::PumpComponent>();
+	pumpComp->SetRange(static_cast<float>(GetInstance().m_TileSize));
+
+	auto fire = std::make_unique<game::FireCommand>(pump.get(), playerMoveComp);
+	auto fireSecondary = std::make_unique<game::FireCommand>(pump.get(), playerMoveComp);
+	auto hold = std::make_unique<game::HoldCommand>(pump.get(), playerMoveComp);
+	auto holdSecondary = std::make_unique<game::HoldCommand>(pump.get(), playerMoveComp);
+
+	// SHOOT
+	dae::InputManager::GetInstance().AddControllerCommand(dae::XBox360Controller::Button::ButtonA, std::move(fire), controllerIdx, dae::InputManager::KeyState::Pressed);
+	dae::InputManager::GetInstance().AddKeyboardCommand(SDL_SCANCODE_SPACE, std::move(fireSecondary), dae::InputManager::KeyState::Down);
+	//HOLD
+	dae::InputManager::GetInstance().AddControllerCommand(dae::XBox360Controller::Button::ButtonA, std::move(hold), controllerIdx, dae::InputManager::KeyState::Pressed);
+	dae::InputManager::GetInstance().AddKeyboardCommand(SDL_SCANCODE_SPACE, std::move(holdSecondary), dae::InputManager::KeyState::Pressed);
+
+	pump->SetParent(player.get());
+	scene->Add(std::move(pump));
+
+	scene->Add(std::move(player));
 	++m_PlayerIdx;
 }
 

@@ -42,4 +42,26 @@ namespace game
 	private:
 		dae::GameObject* m_pOwner{};
 	};
+
+	class FireCommand : public dae::Command
+	{
+	public:
+		FireCommand(dae::GameObject* pOwner, game::MoveableComponent* pPlayerMover);
+		virtual void Execute(float) override;
+	private:
+		dae::GameObject* m_pOwner{};
+		game::MoveableComponent* m_pPlayerMoveableComp{ nullptr };
+		game::PumpComponent* m_pPumpComponent{ nullptr };
+	};
+
+	class HoldCommand : public dae::Command
+	{
+	public:
+		HoldCommand(dae::GameObject* pOwner, game::MoveableComponent* pPlayerMover);
+		virtual void Execute(float) override;
+	private:
+		dae::GameObject* m_pOwner{};
+		game::MoveableComponent* m_pPlayerMoveableComp{ nullptr };
+		game::PumpComponent* m_pPumpComponent{ nullptr };
+	};
 }

@@ -6,6 +6,7 @@
 #include "GameSystems.h"
 #include <iostream>
 #include "ServiceLocator.h"
+#include "Enemies.h"
 
 namespace game
 {
@@ -150,6 +151,11 @@ namespace game
             {
                 continue;
             }
+
+            if (collision->GetTag() == "PUMP")
+            {
+                continue;
+            }
             //if (collision->GetTag() == "EDGE")
             //{
             //    std::cout << "Edge\n";
@@ -169,6 +175,137 @@ namespace game
         m_pOwnerCollider->SetPosition(curPos.x, curPos.y);
         m_pOwner->Translate(m_PrevDir * m_MoveSpeed * dt);
         //dae::ServiceLocator::GetSoundSystem().PauseMusic(false);
+    }
+#pragma endregion
+#pragma region PumpComp
+    PumpComponent::PumpComponent(dae::GameObject* pOwner)
+        :Component(pOwner)
+        ,m_pOwner(pOwner)
+    {
+        m_pOwnerCollider = m_pOwner->GetComponent<dae::ColliderComponent>();
+        m_pOwnerTexture = m_pOwner->GetComponent<dae::TextureComponent>();
+        m_pColliders = dae::CollisionManager::GetInstance().GetColliders();
+    }
+    void PumpComponent::Update(float dt)
+    {
+        if (!m_IsActive && !m_IsHooked)
+        {
+            return; 
+        }
+        if (m_IsHooked)
+        {
+            m_TimeHooked += dt;
+            if (m_pHookedEnemy->GetMarkObjectForDelete())
+            {
+                ResetHook();
+                return;
+            }
+            m_pHookedEnemy->GetComponent<game::EnemyComponent>()->AddAir(20.f * dt);
+            //std::cout << "Time hooked: " << m_TimeHooked << '\n';
+
+            if (m_TimeHooked >= m_MaxTimeHooked)
+            {
+                ResetHook();
+                return;
+            }
+            return;
+        }
+        //std::cout << m_CurrentOffset << '\n';
+        if (m_CurrentOffset > m_Range)
+        {
+            ResetHook();
+            return;
+        }  
+
+        if (dae::CollisionManager::GetInstance().DidCountChange())
+        {
+            m_pColliders = dae::CollisionManager::GetInstance().GetColliders();
+        }
+
+        //std::cout   << m_pOwnerCollider->GetGlobalPosition().x << ", "
+        //            << m_pOwnerCollider->GetGlobalPosition().y << ", "
+        //            << m_pOwnerCollider->GetGlobalPosition().z << "\n";
+
+        for (auto& collision : m_pColliders)
+        {
+            if (collision->GetInValid())
+            {
+                continue;
+            }
+            //skipping same collision
+            if (collision == m_pOwnerCollider)
+            {
+                continue;
+            }
+            if (collision->GetTag() == "ENEMY")
+            {
+                //std::cout << "Checking enemy\n";
+                if (m_pOwnerCollider->IsColliding(collision))
+                {
+                    std::cout << "Hooked enemy\n";
+                    m_IsHooked = true;
+                    m_IsActive = false;
+                    m_pHookedEnemy = collision->GetOwner();
+                    m_TimeHooked = 0.f;
+                    break;
+                }
+            }
+        }
+        m_pOwner->Translate(m_Dir * m_MoveSpeed * dt);
+        m_CurrentOffset += m_MoveSpeed * dt;
+    }
+    void PumpComponent::Fire(glm::vec2 direction)
+    {
+        if (!m_IsHooked && !m_IsActive)
+        {
+            m_IsActive = true;
+
+            m_Dir = direction;
+
+            if (direction == glm::vec2{ 1.f, 0.f })
+            {
+                m_pOwnerTexture->SetTexture("Resources/Sprites/PumpRight.png");
+            }
+            else if (direction == glm::vec2{ -1.f, 0.f })
+            {
+                m_pOwnerTexture->SetTexture("Resources/Sprites/PumpLeft.png");
+            }
+            else if (direction == glm::vec2{ 0.f, 1.f })
+            {
+                m_pOwnerTexture->SetTexture("Resources/Sprites/PumpDown.png");
+            }
+            else if (direction == glm::vec2{ 0.f, -1.f })
+            {
+                m_pOwnerTexture->SetTexture("Resources/Sprites/PumpUp.png");
+            }
+            const glm::vec2 textureSize{ m_pOwnerTexture->GetTexturePtr()->GetSize() };
+            m_pOwnerCollider->SetDimensions(textureSize.x, textureSize.y);
+        }
+        if (m_IsHooked)
+        {
+            //Pumping when hooked
+            m_TimeHooked = 0.f;
+            m_pHookedEnemy->GetComponent<game::EnemyComponent>()->AddAir(10.f);
+        }
+    }
+    void PumpComponent::Hold()
+    {
+        if (!m_IsHooked)
+        {
+            return;
+        }
+        m_TimeHooked = 0.f;
+    }
+    void PumpComponent::ResetHook()
+    {
+        m_IsActive = false;
+        m_IsHooked = false;
+        m_TimeHooked = 0;
+        m_pHookedEnemy = nullptr;
+        m_pOwner->Translate(-m_Dir * m_CurrentOffset);
+        m_pOwnerTexture->SetTexture("Resources/Sprites/EmptyPump.png");
+        m_CurrentOffset = 0;
+        return;
     }
 }
 #pragma endregion

@@ -1,6 +1,11 @@
 #pragma once
 #include "Components.h"
 
+namespace dae
+{
+	class Scene;
+}
+
 namespace game
 {
 	class EnemyComponent : public dae::Component
@@ -19,6 +24,7 @@ namespace game
 		virtual void SetStartPos(glm::vec2 startPos) { m_StartPos = startPos; };
 		virtual void Reset();
 		dae::ColliderComponent* GetCollider() const { return m_pCollider; };
+		virtual void AddAir(float amount) = 0;
 	protected:
 		dae::ColliderComponent* m_pCollider{ nullptr };
 		glm::vec2 m_StartPos{};
@@ -93,6 +99,26 @@ namespace game
 		bool CheckClearInAxis(Axis axis);
 	};
 
+	class StunnedState final : public PookaState
+	{
+	public:
+		StunnedState(PookaComponent* pPooka);
+		~StunnedState() = default;
+
+		virtual PookaState* Update(float dt) override;
+		virtual void OnEnter() override;
+		virtual void OnExit() override {};
+
+		void AddStretchAmount(float amount);
+
+	private:
+		float m_AirAmount{ 0.f };
+		const float m_MaxAirAmount{ 100.f };
+		float m_TimeSinceLastAdd{ 0.f };
+		const float m_MaxTimeSinceLastAdd{ 0.5f };
+		void RemoveStretch(float dt);
+	};
+
 	class PookaComponent : public game::EnemyComponent
 	{
 	public:
@@ -108,11 +134,18 @@ namespace game
 
 		SearchingState* GetPookaSearchState() const { return m_pSearchState.get(); };
 		GhostState* GetPookaGhostState() const { return m_pGhostState.get(); };
+		StunnedState* GetPookaStunnedState() const { return m_pStunnedState.get(); };
+
+		PookaState* GetPreviousState() const { return m_PreviousState; };
+
 		virtual void Reset() override;
+		virtual void AddAir(float amount) override;
 	private:
 		std::unique_ptr<SearchingState> m_pSearchState{ nullptr };
 		std::unique_ptr<GhostState> m_pGhostState{ nullptr };
+		std::unique_ptr<StunnedState> m_pStunnedState{ nullptr };
 		PookaState* m_CurrentState{ nullptr };
+		PookaState* m_PreviousState{ nullptr };
 	};
 
 }

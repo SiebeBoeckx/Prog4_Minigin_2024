@@ -277,7 +277,8 @@ void game::LevelCreator::SpawnPooka(float xPos, float yPos, dae::Scene* scene) c
 	pooka->SetLocalPosition(xPos, yPos);
 	dae::ColliderComponent* colliderComp = &pooka->AddComponent<dae::ColliderComponent>("ENEMY");
 	colliderComp->SetDimensions(16.f, 16.f);
-	&pooka->AddComponent<game::PookaComponent>();
+	game::PookaComponent* pookaComp = &pooka->AddComponent<game::PookaComponent>();
+	pookaComp->SetStartPos({ xPos, yPos });
 
 	scene->Add(std::move(pooka));
 }

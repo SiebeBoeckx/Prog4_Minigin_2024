@@ -3,9 +3,28 @@
 
 namespace game
 {
+	class EnemyComponent : public dae::Component
+	{
+	public:
+		EnemyComponent(dae::GameObject* pOwner);
+		virtual ~EnemyComponent() = default;
+
+		EnemyComponent(const EnemyComponent& other) = delete;
+		EnemyComponent(EnemyComponent&& other) = delete;
+		EnemyComponent& operator=(const EnemyComponent& other) = delete;
+		EnemyComponent& operator=(EnemyComponent&& other) = delete;
+
+		virtual void Update(float dt) = 0;
+
+		virtual void SetStartPos(glm::vec2 startPos) { m_StartPos = startPos; };
+		virtual void Reset();
+		dae::ColliderComponent* GetCollider() const { return m_pCollider; };
+	protected:
+		dae::ColliderComponent* m_pCollider{ nullptr };
+		glm::vec2 m_StartPos{};
+	};
+
 	class PookaComponent; // Forward declaration
-	class SearchingState;
-	class GhostState;
 
 	class PookaState
 	{
@@ -74,7 +93,7 @@ namespace game
 		bool CheckClearInAxis(Axis axis);
 	};
 
-	class PookaComponent : public dae::Component
+	class PookaComponent : public game::EnemyComponent
 	{
 	public:
 		PookaComponent(dae::GameObject* pOwner);
@@ -89,9 +108,8 @@ namespace game
 
 		SearchingState* GetPookaSearchState() const { return m_pSearchState.get(); };
 		GhostState* GetPookaGhostState() const { return m_pGhostState.get(); };
-		dae::ColliderComponent* GetCollider() const { return m_pCollider; };
+		virtual void Reset() override;
 	private:
-		dae::ColliderComponent* m_pCollider{ nullptr };
 		std::unique_ptr<SearchingState> m_pSearchState{ nullptr };
 		std::unique_ptr<GhostState> m_pGhostState{ nullptr };
 		PookaState* m_CurrentState{ nullptr };

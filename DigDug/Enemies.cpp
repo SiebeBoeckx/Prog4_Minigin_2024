@@ -12,6 +12,17 @@
 
 glm::vec2 ChooseRandomDirection(std::vector<glm::vec2> prevDirs);
 
+game::EnemyComponent::EnemyComponent(dae::GameObject* pOwner)
+    :Component(pOwner)
+{
+    m_pCollider = pOwner->GetComponent<dae::ColliderComponent>();
+}
+
+void game::EnemyComponent::Reset()
+{
+    GetOwner()->SetLocalPosition({ m_StartPos, 0.f });
+}
+
 game::PookaState::PookaState(PookaComponent* pPooka)
 	:m_pPooka{ pPooka }
 {
@@ -116,6 +127,7 @@ glm::vec2 game::SearchingState::DirectionChecks(float dt, glm::vec2 prevDir)
                 {
                     auto loseLife = std::make_unique<game::LoseLifeCommand>(collision->GetOwner());
                     loseLife->Execute(0.f);
+                    m_pPooka->Reset();
                 }
                 continue;
             }
@@ -240,6 +252,8 @@ game::PookaState* game::GhostState::Update(float dt)
             {
                 auto loseLife = std::make_unique<game::LoseLifeCommand>(collision->GetOwner());
                 loseLife->Execute(0.f);
+                m_pPooka->Reset();
+                return m_pPooka->GetPookaSearchState();
             }
             continue;
         }
@@ -395,10 +409,8 @@ bool game::GhostState::CheckClearInAxis(Axis axis)
 }
 
 game::PookaComponent::PookaComponent(dae::GameObject* pOwner)
-	: Component(pOwner)
+	: EnemyComponent(pOwner)
 {
-    m_pCollider = pOwner->GetComponent<dae::ColliderComponent>();
-
     m_pSearchState = std::make_unique<SearchingState>(this);
     m_pGhostState = std::make_unique<GhostState>(this);
     m_CurrentState = m_pSearchState.get();
@@ -412,7 +424,14 @@ void game::PookaComponent::Update(float dt)
     {
         m_CurrentState->OnExit();
         newState->OnEnter();
+        m_CurrentState = newState;
     }
+}
 
-    m_CurrentState = newState;
+void game::PookaComponent::Reset()
+{
+    m_CurrentState->OnExit();
+    m_CurrentState = GetPookaSearchState();
+    m_CurrentState->OnEnter();
+    EnemyComponent::Reset();
 }

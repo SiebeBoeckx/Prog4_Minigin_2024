@@ -4,6 +4,7 @@
 #include "CollisionManager.h"
 #include "Wall.h"
 #include <iostream>
+#include "Enemies.h"
 
 using namespace dae;
 
@@ -47,5 +48,18 @@ namespace game
 	void LoseLifeCommand::Execute(float)
 	{
 		m_pOwner->GetComponent<game::PlayerComponent>()->LoseLife();
+
+		for (auto& collision : CollisionManager::GetInstance().GetColliders())
+		{
+			if (collision->GetInValid())
+			{
+				continue;
+			}
+			if (collision->GetTag() == "ENEMY")
+			{
+				collision->GetOwner()->GetComponent<game::EnemyComponent>()->Reset();
+				continue;
+			}
+		}
 	}
 }

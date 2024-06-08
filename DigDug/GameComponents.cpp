@@ -29,10 +29,16 @@ namespace game
             m_pColliders = dae::CollisionManager::GetInstance().GetColliders();
         }
 
+        bool enemyLeft{ false };
         for (auto& collision : m_pColliders)
         {
             if (collision->GetInValid())
             {
+                continue;
+            }
+            if (collision->GetTag() == "ENEMY")
+            {
+                enemyLeft = true;
                 continue;
             }
             if (!collision->IsColliding(playerCollider))
@@ -43,7 +49,13 @@ namespace game
             {
                 game::WallComponent* wallComp = collision->GetOwner()->GetComponent<game::WallComponent>();
                 wallComp->DigWalls(playerCollider);
-            }
+                continue;
+            }  
+        }
+
+        if (!enemyLeft)
+        {
+            game::SceneSystem::GetInstance().HandleEvent(EventType::GAME_WIN);
         }
     }
 

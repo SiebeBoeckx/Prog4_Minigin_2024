@@ -2,6 +2,7 @@
 #include "Wall.h"
 #include "GameObject.h"
 #include "GameSystems.h"
+#include "GameComponents.h"
 
 game::WallComponent::WallComponent(dae::GameObject* pOwner, float size)
 	: Component(pOwner)
@@ -110,23 +111,43 @@ void game::WallComponent::DigWalls(const dae::ColliderComponent* playerCollider)
 			continue;
 		}
 
+		const int playerNr = playerCollider->GetOwner()->GetComponent<game::PlayerComponent>()->GetPlayerNr();
+
 		switch (i)
 		{
 		case 0:
+			GivePoints(playerNr);
 			RemoveSide(Directions::Top);
 			break;
 		case 1:
+			GivePoints(playerNr);
 			RemoveSide(Directions::Bottom);
 			break;
 		case 2:
+			GivePoints(playerNr);
 			RemoveSide(Directions::Left);
 			break;
 		case 3:
+			GivePoints(playerNr);
 			RemoveSide(Directions::Right);
 			break;
 		default:
 			break;
 		}
-		//Add score here
+	}
+}
+
+void game::WallComponent::GivePoints(int playerNr)
+{
+	switch (playerNr)
+	{
+	case 0:
+		game::ScoreSystem::GetInstance().HandleEvent(game::DIG_P1);
+		break;
+	case 1:
+		game::ScoreSystem::GetInstance().HandleEvent(game::DIG_P2);
+		break;
+	default:
+		break;
 	}
 }

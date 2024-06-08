@@ -42,17 +42,6 @@ namespace game
             {
                 game::WallComponent* wallComp = collision->GetOwner()->GetComponent<game::WallComponent>();
                 wallComp->DigWalls(playerCollider);
-                switch (m_PlayerNr)
-                {
-                case 0:
-                    game::ScoreSystem::GetInstance().HandleEvent(game::DIG_P1);
-                    break;
-                case 1:
-                    game::ScoreSystem::GetInstance().HandleEvent(game::DIG_P2);
-                    break;
-                default:
-                    break;
-                }
             }
         }
     }
@@ -178,9 +167,10 @@ namespace game
     }
 #pragma endregion
 #pragma region PumpComp
-    PumpComponent::PumpComponent(dae::GameObject* pOwner)
+    PumpComponent::PumpComponent(dae::GameObject* pOwner, dae::GameObject* pPlayer)
         :Component(pOwner)
         ,m_pOwner(pOwner)
+        ,m_pPlayer(pPlayer)
     {
         m_pOwnerCollider = m_pOwner->GetComponent<dae::ColliderComponent>();
         m_pOwnerTexture = m_pOwner->GetComponent<dae::TextureComponent>();
@@ -248,10 +238,11 @@ namespace game
                 //std::cout << "Checking enemy\n";
                 if (m_pOwnerCollider->IsColliding(collision))
                 {
-                    std::cout << "Hooked enemy\n";
+                    //std::cout << "Hooked enemy\n";
                     m_IsHooked = true;
                     m_IsActive = false;
                     m_pHookedEnemy = collision->GetOwner();
+                    m_pHookedEnemy->GetComponent<game::EnemyComponent>()->SetPlayer(m_pPlayer);
                     m_TimeHooked = 0.f;
                     break;
                 }

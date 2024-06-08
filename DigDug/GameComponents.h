@@ -13,10 +13,11 @@ namespace game
 
 		void AddObserver(dae::IObserver<game::EventType>* obs);
 		void RemoveObserver(dae::IObserver<game::EventType>* obs);
-		int GetLives() const { return m_Lives; }
 		void SetStartPos(glm::vec2 pos) { m_StartPos = pos; };
 
+		int GetLives() const { return m_Lives; }
 		void LoseLife();	
+		int GetPlayerNr() const { return m_PlayerNr; };
 	private:
 		const int m_PlayerNr;
 		int m_Lives;
@@ -49,16 +50,18 @@ namespace game
 	class PumpComponent final : public dae::Component
 	{
 	public:
-		PumpComponent(dae::GameObject* pOwner);
+		PumpComponent(dae::GameObject* pOwner, dae::GameObject* pPlayer);
 
 		virtual void Update(float dt) override;
 		void Fire(glm::vec2 direction);
 		void Hold();
 
 		void SetRange(float range) { m_Range = range; };
-		bool GetIsActive() const { return m_IsActive; }; //XOR
+		bool GetIsActive() const { return m_IsActive; };
+		dae::GameObject* GetPlayer() const { return m_pPlayer; };
 	private:
 		dae::GameObject* m_pOwner{ nullptr }; //Store again here instead of in Comp so i can access non-const functions
+		dae::GameObject* m_pPlayer{ nullptr };
 		std::vector<dae::ColliderComponent*> m_pColliders{};
 		dae::ColliderComponent* m_pOwnerCollider{};
 		dae::TextureComponent* m_pOwnerTexture{};

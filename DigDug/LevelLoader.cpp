@@ -53,6 +53,8 @@ bool game::LevelCreator::CreateLevel(const std::wstring& filePath, dae::Scene* s
 	int nrRows = nrRowsVal.GetInt();
 	int nrCols = nrColsVal.GetInt();
 
+	GetInstance().m_NrOfRows = nrRows;
+
 	GetInstance().m_TileSize = tileSize;
 
 	std::vector<int>levelLayout;
@@ -70,8 +72,7 @@ bool game::LevelCreator::CreateLevel(const std::wstring& filePath, dae::Scene* s
 	}
 
 	// starting position of the grid for the level
-	glm::vec3 startPos{ 160.f, 64.f, 0.f };
-
+	glm::vec2 startPos{ GetInstance().m_MapOffset };
 	//Outer collision frame
 	auto outerCollider = std::make_unique<dae::GameObject>();
 	outerCollider->SetLocalPosition(0.f, 0.f);
@@ -272,7 +273,7 @@ void game::LevelCreator::SpawnPlayer1(float xPos, float yPos, dae::Scene* scene,
 	colliderComp = &pump->AddComponent<dae::ColliderComponent>("PUMP");
 	const glm::vec2 textureSize{ texture->GetTexturePtr()->GetSize() };
 	colliderComp->SetDimensions(textureSize.x, textureSize.y);
-	game::PumpComponent* pumpComp = &pump->AddComponent<game::PumpComponent>();
+	game::PumpComponent* pumpComp = &pump->AddComponent<game::PumpComponent>(player.get());
 	pumpComp->SetRange(static_cast<float>(GetInstance().m_TileSize));
 
 	auto fire = std::make_unique<game::FireCommand>(pump.get(), playerMoveComp);

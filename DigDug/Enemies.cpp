@@ -10,7 +10,7 @@
 //game::SearchingState game::PookaState::m_Searching(nullptr);
 //game::GhostState game::PookaState::m_Ghost(nullptr);     
 
-
+#pragma region Base objects
 glm::vec2 ChooseRandomDirection(std::vector<glm::vec2> prevDirs);
 
 game::EnemyComponent::EnemyComponent(dae::GameObject* pOwner)
@@ -28,6 +28,8 @@ game::PookaState::PookaState(PookaComponent* pPooka)
 	:m_pPooka{ pPooka }
 {
 }
+#pragma endregion
+#pragma region SearchingState
 
 game::SearchingState::SearchingState(PookaComponent* pPooka)
 	:PookaState(pPooka)
@@ -38,6 +40,10 @@ game::SearchingState::SearchingState(PookaComponent* pPooka)
 
 game::PookaState* game::SearchingState::Update(float dt)
 {
+    if (m_FirstUpdate)
+    {
+        m_pColliders = dae::CollisionManager::GetInstance().GetColliders();
+    }
 	m_CurrentSeachTime += dt;
 	if (m_CurrentSeachTime >= m_MaxSearchTime)
 	{
@@ -216,7 +222,8 @@ glm::vec2 ChooseRandomDirection(std::vector<glm::vec2> prevDirs)
 
     return directions[dis(gen)];
 }
-
+#pragma endregion
+#pragma region GhostState
 game::GhostState::GhostState(PookaComponent* pPooka)
 	:PookaState(pPooka)
 {
@@ -238,24 +245,14 @@ game::GhostState::GhostState(PookaComponent* pPooka)
 
 game::PookaState* game::GhostState::Update(float dt)
 {
+    if (m_FirstUpdate)
+    {
+        UpdateColliders();
+    }
     //Check collision
     if (dae::CollisionManager::GetInstance().DidCountChange())
     {
-        m_pColliders = dae::CollisionManager::GetInstance().GetColliders();
-
-        m_pPlayers.clear();
-        //Refill players
-        for (auto& collision : m_pColliders)
-        {
-            if (collision->GetInValid())
-            {
-                continue;
-            }
-            if (collision->GetTag() == "PLAYER")
-            {
-                m_pPlayers.push_back(collision->GetOwner());
-            }
-        }
+        UpdateColliders();
     }
     const glm::vec2 ownPos = m_pPooka->GetOwner()->GetWorldPosition();
     const int gridSize = game::LevelCreator::GetInstance().GetTileSize();
@@ -305,6 +302,7 @@ game::PookaState* game::GhostState::Update(float dt)
                 {
                     //std::cout << "Hit by pump\n";
                     m_pOwnerCollider->SetPosition(curPos.x, curPos.y);
+                    //m_pPooka->SetPlayer(collision->GetOwner()->GetComponent<game::PumpComponent>()->GetPlayer());
                     return m_pPooka->GetPookaStunnedState();
                 }
             }
@@ -461,15 +459,26 @@ bool game::GhostState::CheckClearInAxis(Axis axis)
     return true;
 }
 
-game::PookaComponent::PookaComponent(dae::GameObject* pOwner)
-	: EnemyComponent(pOwner)
+void game::GhostState::UpdateColliders()
 {
-    m_pSearchState = std::make_unique<SearchingState>(this);
-    m_pGhostState = std::make_unique<GhostState>(this);
-    m_pStunnedState = std::make_unique<StunnedState>(this);
-    m_CurrentState = m_pSearchState.get();
-}
+    m_pColliders = dae::CollisionManager::GetInstance().GetColliders();
 
+    m_pPlayers.clear();
+    //Refill players
+    for (auto& collision : m_pColliders)
+    {
+        if (collision->GetInValid())
+        {
+            continue;
+        }
+        if (collision->GetTag() == "PLAYER")
+        {
+            m_pPlayers.push_back(collision->GetOwner());
+        }
+    }
+}
+#pragma endregion
+#pragma region StunnedState
 game::StunnedState::StunnedState(PookaComponent* pPooka)
     :PookaState(pPooka)
 {
@@ -477,6 +486,7 @@ game::StunnedState::StunnedState(PookaComponent* pPooka)
 
 game::PookaState* game::StunnedState::Update(float dt)
 {
+    ChangeTexture();
     m_TimeSinceLastAdd += dt;
     if (m_TimeSinceLastAdd >= m_MaxTimeSinceLastAdd)
     {
@@ -495,6 +505,7 @@ game::PookaState* game::StunnedState::Update(float dt)
     }
     if (m_AirAmount >= m_MaxAirAmount)
     {
+        GivePoints(m_pPooka->GetPlayer()->GetComponent<game::PlayerComponent>()->GetPlayerNr());
         m_pPooka->GetOwner()->MarkObjectForDelete();
     }
     return m_pPooka->GetPookaStunnedState();
@@ -510,7 +521,7 @@ void game::StunnedState::AddStretchAmount(float amount)
 {
     m_TimeSinceLastAdd = 0.f;
     m_AirAmount += amount;
-    std::cout << m_AirAmount << '\n';
+    //std::cout << m_AirAmount << '\n';
 }
 
 void game::StunnedState::RemoveStretch(float dt)
@@ -519,6 +530,102 @@ void game::StunnedState::RemoveStretch(float dt)
     m_AirAmount -= 20.f * dt;
 }
 
+void game::StunnedState::ChangeTexture()
+{
+    if (m_AirAmount > 80)
+    {
+        m_pPooka->GetOwner()->GetComponent<dae::TextureComponent>()->SetTexture("Resources/Sprites/PookaStretch4.png");
+    }
+    else if (m_AirAmount > 60)
+    {
+        m_pPooka->GetOwner()->GetComponent<dae::TextureComponent>()->SetTexture("Resources/Sprites/PookaStretch3.png");
+    }
+    else if (m_AirAmount > 40)
+    {
+        m_pPooka->GetOwner()->GetComponent<dae::TextureComponent>()->SetTexture("Resources/Sprites/PookaStretch2.png");
+    }
+    else if (m_AirAmount > 20)
+    {
+        m_pPooka->GetOwner()->GetComponent<dae::TextureComponent>()->SetTexture("Resources/Sprites/PookaStretch1.png");
+    }
+    else
+    {
+        m_pPooka->GetOwner()->GetComponent<dae::TextureComponent>()->SetTexture("Resources/Sprites/PookaStretch0.png");
+    }
+}
+
+void game::StunnedState::GivePoints(int playerNr)
+{
+    const glm::vec2 globPos = m_pPooka->GetOwner()->GetWorldPosition();
+    const glm::vec2 offset = LevelCreator::GetInstance().m_MapOffset;
+    const int tileSize = LevelCreator::GetInstance().GetTileSize();
+    const int nrOfRows = LevelCreator::GetInstance().GetNumberOfRows() - 1; //One is air
+
+    // Calculate the relative position
+    const glm::vec2 relativePos = globPos - offset;
+
+    std::cout << offset.y + tileSize * nrOfRows << '\n';
+
+    // Calculate the row index
+    const int rowIndex = static_cast<int>((relativePos.y + tileSize) / tileSize);
+
+    std::cout << relativePos.y << '\n';
+    std::cout << rowIndex << '\n';
+
+    switch (playerNr)
+    {
+    case 0:
+        if (rowIndex >= nrOfRows - 2) // 3 lowest 12-10
+        {
+            game::ScoreSystem::GetInstance().HandleEvent(game::KILL_POOKA_4_P1);
+        }
+        else if (rowIndex >= nrOfRows - 5) // 6    9-7
+        {
+            game::ScoreSystem::GetInstance().HandleEvent(game::KILL_POOKA_3_P1);
+        }
+        else if (rowIndex >= nrOfRows - 8) // 9    6-4
+        {
+            game::ScoreSystem::GetInstance().HandleEvent(game::KILL_POOKA_2_P1);
+        }
+        else
+        {
+            game::ScoreSystem::GetInstance().HandleEvent(game::KILL_POOKA_1_P1);
+        }
+        break;
+    case 1:
+        if (rowIndex >= nrOfRows - 2) // 3 lowest
+        {
+            game::ScoreSystem::GetInstance().HandleEvent(game::KILL_POOKA_4_P2);
+        }
+        else if (rowIndex >= nrOfRows - 5) // 6
+        {
+            game::ScoreSystem::GetInstance().HandleEvent(game::KILL_POOKA_3_P2);
+        }
+        else if (rowIndex >= nrOfRows - 8) // 9
+        {
+            game::ScoreSystem::GetInstance().HandleEvent(game::KILL_POOKA_2_P2);
+        }
+        else
+        {
+            game::ScoreSystem::GetInstance().HandleEvent(game::KILL_POOKA_1_P2);
+        }
+        break;
+    default:
+        break;
+    }
+
+    
+}
+#pragma endregion
+#pragma region PookaComponent
+game::PookaComponent::PookaComponent(dae::GameObject* pOwner)
+    : EnemyComponent(pOwner)
+{
+    m_pSearchState = std::make_unique<SearchingState>(this);
+    m_pGhostState = std::make_unique<GhostState>(this);
+    m_pStunnedState = std::make_unique<StunnedState>(this);
+    m_CurrentState = m_pSearchState.get();
+}
 
 void game::PookaComponent::Update(float dt)
 {
@@ -552,3 +659,4 @@ void game::PookaComponent::AddAir(float amount)
     }
     GetPookaStunnedState()->AddStretchAmount(amount);
 }
+#pragma endregion

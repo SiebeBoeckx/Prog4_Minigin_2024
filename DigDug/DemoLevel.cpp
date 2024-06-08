@@ -44,6 +44,7 @@ DemoLevel::DemoLevel(dae::Scene* pScene)
 	//wallObject->SetLocalPosition(300, 400);
 	//pScene->Add(std::move(wallObject));
 
+	game::LevelCreator::GetInstance().m_MapOffset = glm::vec3{ 160.f, 64.f, 0.f };
 	game::LevelCreator::GetInstance().CreateLevel(L"../Data/level1.json", pScene, sceneStartSubject.get());
 
 	// START GAME

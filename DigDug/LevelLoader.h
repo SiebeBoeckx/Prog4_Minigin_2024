@@ -12,7 +12,9 @@ namespace game
 	public:
 		static bool CreateLevel(const std::wstring& filePath, dae::Scene* scene, dae::Subject<game::EventType>* sceneStartSubject);
 		const int GetTileSize() const { return m_TileSize; };
+		const int GetNumberOfRows() const { return m_NrOfRows; };
 
+		glm::vec2 m_MapOffset{};
 	private:
 		void CreateWall(dae::Scene* scene, float xPos, float yPos, int type) const;
 		void SpawnPlayer1(float xPos, float yPos, dae::Scene* scene, dae::Subject<game::EventType>* sceneStartSubject);
@@ -20,5 +22,6 @@ namespace game
 
 		int m_TileSize{ 0 };
 		int m_PlayerIdx{ 0 };
+		int m_NrOfRows{ 0 };
 	};
 }

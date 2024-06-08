@@ -25,9 +25,12 @@ namespace game
 		virtual void Reset();
 		dae::ColliderComponent* GetCollider() const { return m_pCollider; };
 		virtual void AddAir(float amount) = 0;
+		void SetPlayer(dae::GameObject* pPlayer) { m_pPlayer = pPlayer; };
+		dae::GameObject* GetPlayer() const { return m_pPlayer; };
 	protected:
 		dae::ColliderComponent* m_pCollider{ nullptr };
 		glm::vec2 m_StartPos{};
+		dae::GameObject* m_pPlayer{ nullptr };
 	};
 
 	class PookaComponent; // Forward declaration
@@ -69,6 +72,8 @@ namespace game
 		std::vector<dae::ColliderComponent*> m_pColliders{};
 		dae::ColliderComponent* m_pOwnerCollider{};
 
+		bool m_FirstUpdate{ true };
+
 		glm::vec2 DirectionChecks(float dt, glm::vec2 prevDir);
 	};
 
@@ -95,8 +100,11 @@ namespace game
 		dae::ColliderComponent* m_pOwnerCollider{};
 		std::vector<dae::GameObject*> m_pPlayers{};
 
+		bool m_FirstUpdate{ true };
+
 		glm::vec2 FindClosestPlayerPos();
 		bool CheckClearInAxis(Axis axis);
+		void UpdateColliders();
 	};
 
 	class StunnedState final : public PookaState
@@ -111,12 +119,16 @@ namespace game
 
 		void AddStretchAmount(float amount);
 
+
 	private:
 		float m_AirAmount{ 0.f };
 		const float m_MaxAirAmount{ 100.f };
 		float m_TimeSinceLastAdd{ 0.f };
 		const float m_MaxTimeSinceLastAdd{ 0.5f };
+
 		void RemoveStretch(float dt);
+		void ChangeTexture();
+		void GivePoints(int playerNr);
 	};
 
 	class PookaComponent : public game::EnemyComponent

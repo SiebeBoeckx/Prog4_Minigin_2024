@@ -14,7 +14,17 @@ namespace game
 		PICKUP_ITEM_P2,
 
 		DIG_P1,
-		DIG_P2
+		DIG_P2,
+
+		KILL_POOKA_1_P1,
+		KILL_POOKA_2_P1,
+		KILL_POOKA_3_P1,
+		KILL_POOKA_4_P1,
+
+		KILL_POOKA_1_P2,
+		KILL_POOKA_2_P2,
+		KILL_POOKA_3_P2,
+		KILL_POOKA_4_P2
 	};
 }
 

@@ -31,6 +31,7 @@ namespace game
 		std::vector<dae::ColliderComponent*> m_Colliders;
 		std::vector<bool> m_IsOpenBools;
 		dae::TextureComponent* m_pTextureComp;
+		void GivePoints(int playerNr);
 	};
 
 }

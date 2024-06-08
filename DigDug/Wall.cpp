@@ -142,10 +142,10 @@ void game::WallComponent::GivePoints(int playerNr)
 	switch (playerNr)
 	{
 	case 0:
-		game::ScoreSystem::GetInstance().HandleEvent(game::DIG_P1);
+		game::ScoreSystem::GetInstance().HandleEvent(EventType::DIG_P1);
 		break;
 	case 1:
-		game::ScoreSystem::GetInstance().HandleEvent(game::DIG_P2);
+		game::ScoreSystem::GetInstance().HandleEvent(EventType::DIG_P2);
 		break;
 	default:
 		break;

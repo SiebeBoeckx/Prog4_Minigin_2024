@@ -5,6 +5,8 @@
 #include "Wall.h"
 #include <iostream>
 #include "Enemies.h"
+#include "GameSystems.h"
+#include "Scene.h"
 
 using namespace dae;
 
@@ -20,6 +22,10 @@ namespace game
 	};
 	void MoveCommand::Execute(float dt)
 	{
+		if(game::SceneSystem::GetInstance().GetScene()->GetPaused())
+		{
+			return;
+		}
 		if (!m_pOwner)
 		{
 			return;
@@ -55,7 +61,7 @@ namespace game
 			{
 				continue;
 			}
-			if (collision->GetTag() == "ENEMY")
+			if (collision->GetTag() == "ENEMY") //Reset enemies
 			{
 				collision->GetOwner()->GetComponent<game::EnemyComponent>()->Reset();
 				continue;
@@ -71,6 +77,10 @@ namespace game
 	}
 	void FireCommand::Execute(float)
 	{
+		if (game::SceneSystem::GetInstance().GetScene()->GetPaused())
+		{
+			return;
+		}
 		m_pPumpComponent->Fire(m_pPlayerMoveableComp->GetPrevDir());
 	}
 
@@ -84,6 +94,10 @@ namespace game
 
 	void HoldCommand::Execute(float)
 	{
+		if (game::SceneSystem::GetInstance().GetScene()->GetPaused())
+		{
+			return;
+		}
 		m_pPumpComponent->Hold();
 	}
 }

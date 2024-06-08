@@ -26,10 +26,14 @@ namespace dae
 		Scene& operator=(const Scene& other) = delete;
 		Scene& operator=(Scene&& other) = delete;
 
+		void TogglePauseScene(bool pause) { m_IsPaused = pause; };
+		const bool GetPaused() const { return m_IsPaused; };
+
 	private: 
 
 		std::string m_name;
 		std::vector <std::unique_ptr<GameObject>> m_objects{};
+		bool m_IsPaused{ false };
 
 		static unsigned int m_idCounter; 
 		void DeletionUpdate();

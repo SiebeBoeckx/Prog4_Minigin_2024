@@ -1,5 +1,6 @@
 #include "GameSystems.h"
 #include "ServiceLocator.h"
+#include "Scene.h"
 
 namespace game
 {
@@ -83,5 +84,21 @@ namespace game
 	void ScoreSystem::RemoveObserver_P2(IObserver* obs)
 	{
 		m_pScoreSubject2->RemoveObserver(obs);
+	}
+
+
+	void SceneSystem::HandleEvent(game::EventType event)
+	{
+		switch (event)
+		{
+		case EventType::GAME_WIN:
+			m_pScene->TogglePauseScene(true);
+			break;
+		case EventType::GAME_OVER:
+			m_pScene->TogglePauseScene(true);
+			break;
+		default:
+			break;
+		}
 	}
 }

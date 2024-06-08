@@ -4,6 +4,11 @@
 #include "Subject.h"
 #include "Event.h"
 
+namespace dae
+{
+	class Scene;
+}
+
 namespace game
 {
 	class ScoreSystem : public dae::Singleton<ScoreSystem>, public dae::IObserver<game::EventType>
@@ -20,6 +25,7 @@ namespace game
 
 	private:
 		friend class Singleton<ScoreSystem>;
+
 		ScoreSystem()
 		{
 			m_pScoreSubject1 = std::make_unique<dae::Subject<game::EventType>>();
@@ -30,6 +36,21 @@ namespace game
 		int m_PointsPlayer2{0};
 		std::unique_ptr<dae::Subject<game::EventType>> m_pScoreSubject1{};
 		std::unique_ptr<dae::Subject<game::EventType>> m_pScoreSubject2{};
+	};
+
+	class SceneSystem : public dae::Singleton<SceneSystem>, public dae::IObserver<game::EventType>
+	{
+	public:
+		void HandleEvent(game::EventType event) override;
+		void SetScene(dae::Scene* pScene) { m_pScene = pScene; };
+		const dae::Scene* GetScene() const { return m_pScene; };
+	private:
+		friend class Singleton<SceneSystem>;
+		SceneSystem()
+		{
+		}
+
+		dae::Scene* m_pScene{ nullptr };
 	};
 
 }

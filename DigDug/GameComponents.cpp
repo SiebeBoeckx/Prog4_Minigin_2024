@@ -63,6 +63,7 @@ namespace game
         if (m_Lives <= 0)
         {
             m_pPlayerSubject->Notify(EventType::GAME_OVER);
+            game::SceneSystem::GetInstance().HandleEvent(EventType::GAME_OVER);
         }
     }
 #pragma endregion
@@ -77,6 +78,7 @@ namespace game
 
     void MoveableComponent::Update(float)
     {
+        m_MoveAlreadyCalled = false;
         const glm::vec2 curPos = m_pOwner->GetWorldPosition();
 
         if (curPos == m_PrevPos)
@@ -112,6 +114,10 @@ namespace game
     }
     void MoveableComponent::Move(float dt)
     {
+        if (m_MoveAlreadyCalled)
+        {
+            return;
+        }
         if (dae::CollisionManager::GetInstance().DidCountChange())
         {
         	m_pColliders = dae::CollisionManager::GetInstance().GetColliders();
@@ -163,6 +169,7 @@ namespace game
         //std::cout << m_pOwner->GetGlobalTransform()->GetPosition().x << ", " << m_pOwner->GetGlobalTransform()->GetPosition().y << ", " << m_pOwner->GetGlobalTransform()->GetPosition().z << '\n';
         m_pOwnerCollider->SetPosition(curPos.x, curPos.y);
         m_pOwner->Translate(m_PrevDir * m_MoveSpeed * dt);
+        m_MoveAlreadyCalled = true;
         //dae::ServiceLocator::GetSoundSystem().PauseMusic(false);
     }
 #pragma endregion

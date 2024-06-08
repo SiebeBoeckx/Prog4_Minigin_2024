@@ -195,6 +195,8 @@ void game::LevelCreator::CreateWall(dae::Scene* scene, float xPos, float yPos, i
 
 void game::LevelCreator::SpawnPlayer1(float xPos, float yPos, dae::Scene* scene, dae::Subject<game::EventType>* sceneStartSubject)
 {
+	game::SceneSystem::GetInstance().SetScene(scene);
+
 	const float size{ 16.f };
 	int controllerIdx = dae::InputManager::GetInstance().AddController();
 	std::unique_ptr<dae::GameObject> player = std::make_unique<dae::GameObject>();
@@ -239,7 +241,7 @@ void game::LevelCreator::SpawnPlayer1(float xPos, float yPos, dae::Scene* scene,
 	//dae::InputManager::GetInstance().AddControllerCommand(dae::XBox360Controller::Button::ButtonX, std::move(loseLife), controllerIdx, dae::InputManager::KeyState::Down);
 
 
-	// LIVES DISPLAY PLAYER 1
+	// LIVES DISPLAY PLAYER
 	auto displayFont = dae::ResourceManager::GetInstance().LoadFont("upheavtt.ttf", 14);
 	auto livesDisplayObject = std::make_unique<dae::GameObject>();
 	livesDisplayObject->AddComponent<dae::TextureComponent>();
@@ -249,10 +251,17 @@ void game::LevelCreator::SpawnPlayer1(float xPos, float yPos, dae::Scene* scene,
 	playerComp->AddObserver(livesDisplayObject->GetComponent<LivesDisplayComponent>());
 	sceneStartSubject->AddObserver(livesDisplayObject->GetComponent<LivesDisplayComponent>());
 
-	livesDisplayObject->SetLocalPosition(40, 100);
+	if (m_PlayerIdx == 0)
+	{
+		livesDisplayObject->SetLocalPosition(40, 100);
+	}
+	else if (m_PlayerIdx == 1)
+	{
+		livesDisplayObject->SetLocalPosition(40, 140);
+	}
 	scene->Add(std::move(livesDisplayObject));
 
-	// SCORE DISPLAY PLAYER 1
+	// SCORE DISPLAY PLAYER
 	displayFont = dae::ResourceManager::GetInstance().LoadFont("upheavtt.ttf", 14);
 	auto scoreDisplayObject = std::make_unique<dae::GameObject>();
 	scoreDisplayObject->AddComponent<dae::TextureComponent>();
@@ -261,9 +270,16 @@ void game::LevelCreator::SpawnPlayer1(float xPos, float yPos, dae::Scene* scene,
 
 	//playerComp->AddObserver(scoreDisplayObject->GetComponent<ScoreDisplayComponent>());
 	sceneStartSubject->AddObserver(scoreDisplayObject->GetComponent<ScoreDisplayComponent>());
-	game::ScoreSystem::GetInstance().AddObserver_P1(scoreDisplayObject->GetComponent<ScoreDisplayComponent>());
-
-	scoreDisplayObject->SetLocalPosition(40, 120);
+	if (m_PlayerIdx == 0)
+	{
+		game::ScoreSystem::GetInstance().AddObserver_P1(scoreDisplayObject->GetComponent<ScoreDisplayComponent>());
+		scoreDisplayObject->SetLocalPosition(40, 120);
+	}
+	else if (m_PlayerIdx == 1)
+	{
+		game::ScoreSystem::GetInstance().AddObserver_P2(scoreDisplayObject->GetComponent<ScoreDisplayComponent>());
+		scoreDisplayObject->SetLocalPosition(40, 160);
+	}
 	scene->Add(std::move(scoreDisplayObject));
 
 	//PUMP
@@ -282,7 +298,7 @@ void game::LevelCreator::SpawnPlayer1(float xPos, float yPos, dae::Scene* scene,
 	auto holdSecondary = std::make_unique<game::HoldCommand>(pump.get(), playerMoveComp);
 
 	// SHOOT
-	dae::InputManager::GetInstance().AddControllerCommand(dae::XBox360Controller::Button::ButtonA, std::move(fire), controllerIdx, dae::InputManager::KeyState::Pressed);
+	dae::InputManager::GetInstance().AddControllerCommand(dae::XBox360Controller::Button::ButtonA, std::move(fire), controllerIdx, dae::InputManager::KeyState::Down);
 	dae::InputManager::GetInstance().AddKeyboardCommand(SDL_SCANCODE_SPACE, std::move(fireSecondary), dae::InputManager::KeyState::Down);
 	//HOLD
 	dae::InputManager::GetInstance().AddControllerCommand(dae::XBox360Controller::Button::ButtonA, std::move(hold), controllerIdx, dae::InputManager::KeyState::Pressed);

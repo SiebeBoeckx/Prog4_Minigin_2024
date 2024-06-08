@@ -135,7 +135,7 @@ glm::vec2 game::SearchingState::DirectionChecks(float dt, glm::vec2 prevDir)
         }
 
         const glm::vec2 curPos = m_pOwnerCollider->GetLocalPosition();
-        const glm::vec2 newPos = curPos + glm::vec2{ newDir * static_cast<float>(gridSize / 4.f) };
+        const glm::vec2 newPos = curPos + glm::vec2{ newDir * static_cast<float>(gridSize / 3.f) };
 
         m_pOwnerCollider->SetPosition(newPos.x, newPos.y);
         m_pOwnerCollider->Update(0.f);
@@ -564,50 +564,50 @@ void game::StunnedState::GivePoints(int playerNr)
     // Calculate the relative position
     const glm::vec2 relativePos = globPos - offset;
 
-    std::cout << offset.y + tileSize * nrOfRows << '\n';
+    //std::cout << offset.y + tileSize * nrOfRows << '\n';
 
     // Calculate the row index
     const int rowIndex = static_cast<int>((relativePos.y + tileSize) / tileSize);
 
-    std::cout << relativePos.y << '\n';
-    std::cout << rowIndex << '\n';
+    //std::cout << relativePos.y << '\n';
+    //std::cout << rowIndex << '\n';
 
     switch (playerNr)
     {
     case 0:
         if (rowIndex >= nrOfRows - 2) // 3 lowest 12-10
         {
-            game::ScoreSystem::GetInstance().HandleEvent(game::KILL_POOKA_4_P1);
+            game::ScoreSystem::GetInstance().HandleEvent(EventType::KILL_POOKA_4_P1);
         }
         else if (rowIndex >= nrOfRows - 5) // 6    9-7
         {
-            game::ScoreSystem::GetInstance().HandleEvent(game::KILL_POOKA_3_P1);
+            game::ScoreSystem::GetInstance().HandleEvent(EventType::KILL_POOKA_3_P1);
         }
         else if (rowIndex >= nrOfRows - 8) // 9    6-4
         {
-            game::ScoreSystem::GetInstance().HandleEvent(game::KILL_POOKA_2_P1);
+            game::ScoreSystem::GetInstance().HandleEvent(EventType::KILL_POOKA_2_P1);
         }
         else
         {
-            game::ScoreSystem::GetInstance().HandleEvent(game::KILL_POOKA_1_P1);
+            game::ScoreSystem::GetInstance().HandleEvent(EventType::KILL_POOKA_1_P1);
         }
         break;
     case 1:
         if (rowIndex >= nrOfRows - 2) // 3 lowest
         {
-            game::ScoreSystem::GetInstance().HandleEvent(game::KILL_POOKA_4_P2);
+            game::ScoreSystem::GetInstance().HandleEvent(EventType::KILL_POOKA_4_P2);
         }
         else if (rowIndex >= nrOfRows - 5) // 6
         {
-            game::ScoreSystem::GetInstance().HandleEvent(game::KILL_POOKA_3_P2);
+            game::ScoreSystem::GetInstance().HandleEvent(EventType::KILL_POOKA_3_P2);
         }
         else if (rowIndex >= nrOfRows - 8) // 9
         {
-            game::ScoreSystem::GetInstance().HandleEvent(game::KILL_POOKA_2_P2);
+            game::ScoreSystem::GetInstance().HandleEvent(EventType::KILL_POOKA_2_P2);
         }
         else
         {
-            game::ScoreSystem::GetInstance().HandleEvent(game::KILL_POOKA_1_P2);
+            game::ScoreSystem::GetInstance().HandleEvent(EventType::KILL_POOKA_1_P2);
         }
         break;
     default:

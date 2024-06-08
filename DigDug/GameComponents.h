@@ -45,6 +45,8 @@ namespace game
 		std::vector<dae::ColliderComponent*> m_pColliders{};
 		dae::ColliderComponent* m_pOwnerCollider{};
 		glm::vec2 m_PrevPos{ 0.f, 0.f };
+
+		bool m_MoveAlreadyCalled{ false };
 	};
 
 	class PumpComponent final : public dae::Component

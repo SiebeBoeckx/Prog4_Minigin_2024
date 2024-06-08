@@ -29,6 +29,10 @@ void Scene::RemoveAll()
 
 void Scene::Update(float dt)
 {
+	if (m_IsPaused)
+	{
+		return;
+	}
 	for(auto& object : m_objects)
 	{
 		if (object == nullptr)
@@ -41,6 +45,10 @@ void Scene::Update(float dt)
 
 void dae::Scene::PhysicsUpdate(float dt)
 {
+	if (m_IsPaused)
+	{
+		return;
+	}
 	for (auto& object : m_objects)
 	{
 		if (object == nullptr)
